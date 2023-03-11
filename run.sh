@@ -33,10 +33,6 @@ if [[ true = $(question "Lancer oauth?") ]] ; then
         screen $DEBUG_SCREEN -S oauth env API_UID= API_SECRET= API_REDIRECT=https://protocole-omega.tech/connected DB_FILE=./omega.db ./oauth/target/release/oauth
 fi
 
-
-#nginx -t
-systemctl restart nginx.service
-
 #Show screen
 sleep 1
 echo recap
