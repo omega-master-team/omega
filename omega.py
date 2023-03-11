@@ -10,6 +10,8 @@ from datetime import datetime
 import asyncio
 
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 from requests_oauthlib import OAuth2Session
 from oauthlib.oauth2 import BackendApplicationClient
@@ -299,8 +301,8 @@ async def on_member_join(member):
 
 def init_api():
     global api
-    client_id = os.getenv("intra_id")
-    client_secret = os.getenv("intra_secret")
+    client_id = os.getenv('intra_id')
+    client_secret = os.getenv('intra_secret')
     client = BackendApplicationClient(client_id=client_id)
     api = OAuth2Session(client=client)
     token = api.fetch_token(token_url='https://api.intra.42.fr/oauth/token', client_id=client_id, client_secret=client_secret)
@@ -624,4 +626,4 @@ async def on_ready():
     while (1):
         await main()
 
-client.run(os.getenv("bot_token"))
+client.run(os.getenv('bot_token'))
