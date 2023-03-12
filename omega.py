@@ -10,8 +10,6 @@ from datetime import datetime
 import asyncio
 
 import os
-from dotenv import load_dotenv
-load_dotenv()
 
 from requests_oauthlib import OAuth2Session
 from oauthlib.oauth2 import BackendApplicationClient
