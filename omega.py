@@ -62,12 +62,21 @@ async def soon(interaction: Interaction):
 
 @tree.command(name = "login", description = "login you with your intra")
 @app_commands.checks.dynamic_cooldown(omega_cooldown)
-async def sign_up(interaction: Interaction):
-    uid = uuid.uuid4()
-    cursor.execute(f"DELETE FROM temp_auth WHERE discord_id={interaction.user.id}")
-    cursor.execute(f"INSERT INTO temp_auth (discord_id, code) VALUES ({interaction.user.id},'{uid}')")
+async def sign_up(interaction: Interaction, discord_id: str, login: str):
+    #     normal code
+    #uid = uuid.uuid4()
+    #cursor.execute(f"DELETE FROM temp_auth WHERE discord_id={interaction.user.id}")
+    #cursor.execute(f"INSERT INTO temp_auth (discord_id, code) VALUES ({interaction.user.id},'{uid}')")
+    #db.commit()
+    #await interaction.response.send_message(f"Merci de suivre la procedure ci dessous\n{redirect}{uid}", ephemeral = True)
+
+    if (not interaction.user.guild_permissions.administrator and not interaction.user.id in omega_master):
+        await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
+        return
+    cursor.execute(f"INSERT INTO new_users (discord_id, intra_id) VALUES ({int(discord_id)},'{login}')")
     db.commit()
-    await interaction.response.send_message(f"Merci de suivre la procedure ci dessous\n{redirect}{uid}", ephemeral = True)
+    await interaction.response.send_message(f"Succes...", ephemeral = True)
+
 
 @sign_up.error
 async def on_test_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
