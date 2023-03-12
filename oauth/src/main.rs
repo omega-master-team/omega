@@ -13,19 +13,19 @@ mod model;
 
 const		API_UID_KEY: &str = "API_UID";
 const		API_SECRET_KEY: &str = "API_SECRET";
-const		API_REDIRECT_KEY: &str = "API_REDIRECT";
+const		DOMAIN_KEY: &str = "DOMAIN";
 const		DB_FILE_KEY: &str = "DB_FILE";
 static mut	API_UID: String = String::new();
 static mut	API_SECRET: String = String::new();
-static mut	API_REDIRECT: String = String::new();
+static mut	DOMAIN: String = String::new();
 static mut	DB_FILE: String = String::new();
 
 fn build_url() -> String {
-	let mut url = "https://api.intra.42.fr/oauth/authorize?client_id=API_UID&redirect_uri=API_REDIRECT&response_type=code".to_string();
+	let mut url = "https://api.intra.42.fr/oauth/authorize?client_id=API_UID&redirect_uri=DOMAIN/connected&response_type=code".to_string();
 	unsafe {
 		url = url.replace("API_UID", API_UID.as_str());
-		let tmp: String = encode(API_REDIRECT.as_str()).to_string();
-		url = url.replace("API_REDIRECT", tmp.as_str());
+		let tmp: String = encode(DOMAIN.as_str()).to_string();
+		url = url.replace("DOMAIN", tmp.as_str());
 	}
 	url
 }
@@ -57,7 +57,7 @@ async fn get_token(intra_code: &str) -> Result<String> {
 			client_id: (API_UID.as_str().to_string()),
 			client_secret: (API_SECRET.as_str().to_string()),
 			grant_type: ("authorization_code".to_string()),
-			redirect_uri: (API_REDIRECT.as_str().to_string())
+			redirect_uri: (DOMAIN.as_str().to_string())
 		};
 	}
 	//println!("{:?}", data);
@@ -158,18 +158,6 @@ macro_rules! svg_response {
             .body($svg)
     }
 }
-/*
-#[get("/logo_white.svg")]
-async fn logo_white() -> Result<HttpResponse> {
-	Ok(svg_response!(include_str!("../static/logo_white.svg")))
-}
-
-
-#[get("/logo_black.svg")]
-async fn logo_black() -> Result<HttpResponse> {
-	Ok(svg_response!(include_str!("../static/logo_black.svg")))
-}
-*/
 
 #[get("/omega.svg")]
 async fn omega() -> Result<HttpResponse> {
@@ -193,47 +181,75 @@ async fn main() -> io::Result<()> {
 			panic!("API SECRET not found in env")
 		});
 		//println!("{} {}", API_SECRET_KEY, API_SECRET);
-		API_REDIRECT = env::var(API_REDIRECT_KEY).unwrap_or_else(|_| {
+		DOMAIN = env::var(DOMAIN_KEY).unwrap_or_else(|_| {
 			panic!("API REDIRECT not found in env")
 		});
-		//println!("{} {}", API_REDIRECT_KEY, API_REDIRECT);
+		//println!("{} {}", DOMAIN_KEY, DOMAIN);
 		DB_FILE = env::var(DB_FILE_KEY).unwrap_or_else(|_| {
 			panic!("Database file not found in env")
 		});
 		//println!("{} {}", DB_FILE_KEY, DB_FILE);
 	}
-    println!("ENV OK");
+	let mode = env::var("MODE").unwrap_or_else(|_| {
+		panic!("MODE not found in env");
+	});
+	println!("ENV OK");
 	let key: Key = actix_web::cookie::Key::generate();
-    println!("Server starting...");
-	let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
-    builder
-        .set_private_key_file("/etc/letsencrypt/live/protocole-omega.tech/privkey.pem", SslFiletype::PEM)
-        .unwrap();
-    builder.set_certificate_chain_file("/etc/letsencrypt/live/protocole-omega.tech/fullchain.pem").unwrap();
-
-	HttpServer::new(move || {
-		App::new()
-			// enable automatic response compression - usually register this first
-			.wrap(middleware::Compress::default())
-			// cookie session middleware
-			.wrap(
-				SessionMiddleware::builder(CookieSessionStore::default(), key.clone())
-					//.cookie_same_site(SameSite::None)
-                    .cookie_secure(false)
-                    //.cookie_http_only(false)
-                    .build(),
-			)
-			// enable logger - always register Actix Web Logger middleware last
-			.wrap(middleware::Logger::default())
-			.service(welcome)
-			.service(connected)
-			.service(omega)
-			//.service(logo_white)
-			//.service(logo_black)
-			.service(favicon)
-			.service(readme)
-	})
-	.bind_openssl("0.0.0.0:443", builder)?
-	.run()
-	.await
+	if mode == "PROD" {
+		println!("Server starting in prod mode ...");
+		let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+		builder
+			.set_private_key_file("/etc/letsencrypt/live/protocole-omega.tech/privkey.pem", SslFiletype::PEM)
+			.unwrap();
+		builder.set_certificate_chain_file("/etc/letsencrypt/live/protocole-omega.tech/fullchain.pem").unwrap();
+	
+		HttpServer::new(move || {
+			App::new()
+				// enable automatic response compression - usually register this first
+				.wrap(middleware::Compress::default())
+				// cookie session middleware
+				.wrap(
+					SessionMiddleware::builder(CookieSessionStore::default(), key.clone())
+						//.cookie_same_site(SameSite::None)
+						.cookie_secure(false)
+						//.cookie_http_only(false)
+						.build(),
+				)
+				// enable logger - always register Actix Web Logger middleware last
+				.wrap(middleware::Logger::default())
+				.service(welcome)
+				.service(connected)
+				.service(omega)
+				.service(favicon)
+				.service(readme)
+		})
+		.bind_openssl("0.0.0.0:443", builder)?
+		.run()
+		.await
+	} else {
+		println!("Server starting in dev mode ...");
+		HttpServer::new(move || {
+			App::new()
+				// enable automatic response compression - usually register this first
+				.wrap(middleware::Compress::default())
+				// cookie session middleware
+				.wrap(
+					SessionMiddleware::builder(CookieSessionStore::default(), key.clone())
+						//.cookie_same_site(SameSite::None)
+						.cookie_secure(false)
+						//.cookie_http_only(false)
+						.build(),
+				)
+				// enable logger - always register Actix Web Logger middleware last
+				.wrap(middleware::Logger::default())
+				.service(welcome)
+				.service(connected)
+				.service(omega)
+				.service(favicon)
+				.service(readme)
+		})
+		.bind(("0.0.0.0", 80))?
+		.run()
+		.await
+	}
 }
