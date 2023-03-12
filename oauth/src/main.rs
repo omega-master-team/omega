@@ -199,9 +199,9 @@ async fn main() -> io::Result<()> {
 		println!("Server starting in prod mode ...");
 		let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
 		builder
-			.set_private_key_file("/app/privkey.pem", SslFiletype::PEM)
+			.set_private_key_file("/app/cert/privkey.pem", SslFiletype::PEM)
 			.unwrap();
-		builder.set_certificate_chain_file("/app/fullchain.pem").unwrap();
+		builder.set_certificate_chain_file("/app/cert/fullchain.pem").unwrap();
 	
 		HttpServer::new(move || {
 			App::new()
