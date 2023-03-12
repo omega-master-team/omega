@@ -112,8 +112,8 @@ Ajouter / modifier sur le service `oauth` dans le `docker-compose.yml`
 ```yml
 volumes:
     - ./omega.db:/app/omega.db
-    - file_privkey:/app/cert/privkey.cert
-    - file_fullchain:/app/cert/fullchain.cert
+    - file_privkey:/app/cert/privkey.pem
+    - file_fullchain:/app/cert/fullchain.pem
 ports:
     - "443:443"
 ```
@@ -127,4 +127,4 @@ ou
 docker compose up --build
 ```
 ## Notes
-La version actuel (beta) à une base de données litesql3 (changement certainement à venir)
+La version actuel (beta) a une base de données litesql3 (changement certainement à venir)
