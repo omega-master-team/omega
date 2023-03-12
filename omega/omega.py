@@ -299,8 +299,8 @@ async def on_member_join(member):
 
 def init_api():
     global api
-    client_id = os.getenv('INTRA_ID')
-    client_secret = os.getenv('INTRA_SECRET')
+    client_id = os.getenv('API_UID')
+    client_secret = os.getenv('API_SECRET')
     client = BackendApplicationClient(client_id=client_id)
     api = OAuth2Session(client=client)
     token = api.fetch_token(token_url='https://api.intra.42.fr/oauth/token', client_id=client_id, client_secret=client_secret)
