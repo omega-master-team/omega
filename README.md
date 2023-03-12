@@ -23,7 +23,7 @@ ___
 ## Prérequis
 
 - Connexion internet
-- 3 Go
+- 5 Go
 - `docker`
 - `docker-compose` (command) ou `docker compose` (plugin)
 - les droits super-utilisateur pour ouvrir les ports réservé (http ou https) ([< 1024](https://www.w3.org/Daemon/User/Installation/PrivilegedPorts.html))
