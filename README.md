@@ -1,4 +1,5 @@
 # Project Omega
+
 ## Concept de base
 Le bot a pour but de syncroniser automatiquement les roles discord aux differents items present sur [l'intranet](https://profile.intra.42.fr). Il supporte actuellement les items suivant :
 - Cursus
@@ -7,15 +8,62 @@ Le bot a pour but de syncroniser automatiquement les roles discord aux different
 - Coalition
 - Années
 
-il permet egalement de definir une politique de nommage permettant d'uniformiser le nom des membres.
+Il permet egalement de definir une politique de nommage permettant d'uniformiser le nom des membres.
 
 ## Etre pris en compte par protocole Omega
-executez la commande /login puis suivre l'oauth sur le lien qui vous sera transmit
 
-Cette manipulation n'est necessaire qu'une seule fois par etudiant
+Executez la commande /login puis suivre l'oauth sur le lien qui vous sera transmit.
+
+Cette manipulation n'est necessaire qu'une seule fois par étudiant
+
+___
+
+# Déploiment
+
+## Prérequis
+
+- Connexion internet
+- 3 Go
+- `docker`
+- `docker-compose` (command) ou `docker compose` (plugin)
+- les droits super-utilisateur pour ouvrir les ports réservé (http ou https) ([< 1024](https://www.w3.org/Daemon/User/Installation/PrivilegedPorts.html))
+
+## Lancement
+
+Renommer le fichier `.env.template` en `.env`, puis saisir toutes les informations.
+
+- `DOMAIN`: Le domaine avec son protocole (ex: `http://toto.42`)
+- `BOT_TOKEN`: Le token du bot discord présent sur le portail developpeur
+- `API_UID`: api intra 42 uid
+- `API_SECRET`: api intra 42 secret
+- `MODE`: DEV (pour run en http), PROD (pour run en https)
+
+**Note:** pour l'api la redirect uri devra correspondre à `DOMAIN/connected`, avec `DOMAIN` la variable du `.env`.
+
+Le déploiement se fait avec docker, pour lancer omega lancer:
+```bash
+# see make help
+make
+```
+**Attention:** le port exposé dans le `docker-compose.yml` ne doit pas être utilisé.
+
+**Note:** le build prend quelques minutes (celon la co et le cpu).
+
+## Détails lié à la mise en production
+
+> Pour lancer le projet en production, il faut:
+> - dans le `.env`, mettre `MODE=PROD`
+> - dans le `docker-compose`, mettre les 2 fichiers pour les certificats ssl en volume (décommenter et mettre le bon path) /!\ changer uniquement le path de la machine et non celui du conteneur
+> - dans le `docker-compose`, changer le port exposé (normalement 443)
+
+___
 
 # Administrer un serveur sous Project Omega
-Les commandes suivantes servent a la configuration des differentes options du bot. Elles peuvent etre effectuer par tous membres possedant les droits administrateur sur le serveur. **Attention** les configurations sont unique, chaque serveur possede la sienne.
+Les commandes suivantes servent a la configuration des differentes options du bot. Elles peuvent etre effectuer par tous membres possedant les droits administrateur sur le serveur.
+
+**Attention** les configurations sont unique, chaque serveur possede la sienne.
+
+
 ## Les commandes de configuration
 
 ### `/sync` : *Configuration globale*
@@ -82,49 +130,8 @@ Les commandes suivantes servent a la configuration des differentes options du bo
 
 ![image](https://user-images.githubusercontent.com/73013583/217359712-2807b613-cb4d-4a41-8b6e-c0bd3465bf34.png)
 
-# Lancer avec docker
+___
 
-Renommer le fichier `.env.template` en `.env`, puis saisir toutes les informations.
+# Notes des devs
 
-- `DOMAIN`: Le domaine avec son protocole (`http://toto.42`)
-- `BOT_TOKEN`: Le token du bot discord présent sur le portail developpeur
-- `API_UID`: api intra 42 uid
-- `API_SECRET`: api intra 42 secret
-- `MODE`: DEV (pour run en http), PROD (pour run en https)
-
-## Lancer en dev
-
-Celon la version de docker compose:
-```bash
-docker-compose up --build
-```
-ou
-```bash
-docker compose up --build
-```
-
-## Lancer en prod
-
-Ajouter / modifier sur le service `oauth` dans le `docker-compose.yml`
-- les certificats 
-- expose le port https
-
-```yml
-volumes:
-    - ./omega.db:/app/omega.db
-    - file_privkey:/app/cert/privkey.pem
-    - file_fullchain:/app/cert/fullchain.pem
-ports:
-    - "443:443"
-```
-
-Celon la version de docker compose:
-```bash
-docker-compose up --build
-```
-ou
-```bash
-docker compose up --build
-```
-## Notes
-La version actuel (beta) a une base de données litesql3 (changement certainement à venir)
+> La version actuel (beta) a une base de données litesql3 (changement certainement à venir [mariadb])
