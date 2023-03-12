@@ -27,7 +27,7 @@ intents.members = True
 client = Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-omega_master = [626861778030034945]
+omega_master = [626861778030034945,289850175713837058]
 redirect = "https://protocole-omega.tech/api?code="
 
 def omega_cooldown(interaction: Interaction):
