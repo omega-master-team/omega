@@ -293,8 +293,7 @@ async def on_member_join(member):
         cursor.execute(f"INSERT INTO temp_auth (discord_id, code) VALUES ({member.id},'{uid}')")
         db.commit()
         try :
-            print("____________________\new member")
-            await member.send(f"Bonjour et bienvenue sur le serveur {member.guild.name} !\n\nCe serveur est régis par le bot Protocole Omega et dispose donc de permissions automatique en fonction de votre compte sur l'intranet de 42.\n\n**Merci de vous autentifier via ce lien**\n{redirect}{uid}\n\nPour tout probleme avec cette étape je vous invite a MP le bot avec votre demande\n\nThe Omega master, Ngennaro")
+            await member.send(f"Hello and welcome to the {member.guild.name} server!\n\nThis server is powered by the Omega Protocol bot and therefore has automatic permissions based on your account on the 42 intranet.\n\n**Please authenticate via this link**\n{redirect}{uid}\n\nFor any problem with this step, I invite you to PM the bot with your request\n\nThe Omega master, Ngennaro")
         except :
             print(f"____________________\nfail to send a message to {member}")
 
