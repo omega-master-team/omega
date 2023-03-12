@@ -131,13 +131,17 @@ async fn connected(session: Session, query: web::Query<model::CodeParam>) -> Res
 					params![person.discord_id],
 				).unwrap();
 			}).await;
-			rep = rep.replace("CONNECT_STATUS", "Success, your discord and your intra are connected");
+			rep = rep.replace("CONNECT_STATUS", "<p>Success, your discord and your intra are connected</p>");
 		} else {
-			rep = rep.replace("CONNECT_STATUS", "<h1 class=\"error\">BAD REQUEST</h1>");
+			rep = rep.replace("CONNECT_STATUS", "<h1 class=\"error\">400 BAD REQUEST</h1>");
+			return Ok(HttpResponse::build(StatusCode::BAD_REQUEST)
+				.content_type(ContentType::html())
+				.body(rep)
+			)
 		}
 	} else {
 		session.purge();
-		rep = rep.replace("CONNECT_STATUS", "<h1 class=\"error\">BAD REQUEST</h1>");
+		rep = rep.replace("CONNECT_STATUS", "<h1 class=\"error\">400 BAD REQUEST</h1>");
 		return Ok(HttpResponse::build(StatusCode::BAD_REQUEST)
 			.content_type(ContentType::html())
 			.body(rep)
