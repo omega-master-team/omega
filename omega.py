@@ -28,7 +28,7 @@ client = Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 omega_master = [626861778030034945,289850175713837058,403231056003596298]
-redirect = "https://protocole-omega.tech/api?code="
+redirect = f"{os.getenv('DOMAIN')}/api?code="
 
 def omega_cooldown(interaction: Interaction):
     if interaction.user.id in omega_master:
@@ -310,8 +310,8 @@ async def on_member_join(member):
 
 def init_api():
     global api
-    client_id = os.getenv('intra_id')
-    client_secret = os.getenv('intra_secret')
+    client_id = os.getenv('INTRA_ID')
+    client_secret = os.getenv('INTRA_SECRET')
     client = BackendApplicationClient(client_id=client_id)
     api = OAuth2Session(client=client)
     token = api.fetch_token(token_url='https://api.intra.42.fr/oauth/token', client_id=client_id, client_secret=client_secret)
@@ -617,7 +617,6 @@ async def main():
                 await asyncio.sleep(0.5)
 
             except :
-                print(f"____________________\nerror or delete user on line {i}")
                 await asyncio.sleep(0.5)
             i = i + 1
         else :
@@ -652,4 +651,4 @@ async def on_ready():
     while (1):
         await main()
 
-client.run(os.getenv('bot_token'))
+client.run(os.getenv('BOT_TOKEN'))
