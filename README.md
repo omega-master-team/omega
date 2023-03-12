@@ -81,3 +81,50 @@ Les commandes suivantes servent a la configuration des differentes options du bo
 ### `/nick_reset` : Suppression des politique de nomage sur le serveur
 
 ![image](https://user-images.githubusercontent.com/73013583/217359712-2807b613-cb4d-4a41-8b6e-c0bd3465bf34.png)
+
+# Lancer avec docker
+
+Renommer le fichier `.env.template` en `.env`, puis saisir toutes les informations.
+
+- `DOMAIN`: Le domaine avec son protocole (`http://toto.42`)
+- `BOT_TOKEN`: Le token du bot discord présent sur le portail developpeur
+- `API_UID`: api intra 42 uid
+- `API_SECRET`: api intra 42 secret
+- `MODE`: DEV (pour run en http), PROD (pour run en https)
+
+## Lancer en dev
+
+Celon la version de docker compose:
+```bash
+docker-compose up --build
+```
+ou
+```bash
+docker compose up --build
+```
+
+## Lancer en prod
+
+Ajouter / modifier sur le service `oauth` dans le `docker-compose.yml`
+- les certificats 
+- expose le port https
+
+```yml
+volumes:
+    - ./omega.db:/app/omega.db
+    - file_privkey:/app/cert/privkey.cert
+    - file_fullchain:/app/cert/fullchain.cert
+ports:
+    - "443:443"
+```
+
+Celon la version de docker compose:
+```bash
+docker-compose up --build
+```
+ou
+```bash
+docker compose up --build
+```
+## Notes
+La version actuel (beta) à une base de données litesql3 (changement certainement à venir)

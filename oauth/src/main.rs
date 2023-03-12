@@ -21,7 +21,7 @@ static mut	DOMAIN: String = String::new();
 static mut	DB_FILE: String = String::new();
 
 fn build_url() -> String {
-	let mut url = "https://api.intra.42.fr/oauth/authorize?client_id=API_UID&redirect_uri=DOMAIN/connected&response_type=code".to_string();
+	let mut url = "https://api.intra.42.fr/oauth/authorize?client_id=API_UID&redirect_uri=DOMAIN%2Fconnected&response_type=code".to_string();
 	unsafe {
 		url = url.replace("API_UID", API_UID.as_str());
 		let tmp: String = encode(DOMAIN.as_str()).to_string();
@@ -57,7 +57,7 @@ async fn get_token(intra_code: &str) -> Result<String> {
 			client_id: (API_UID.as_str().to_string()),
 			client_secret: (API_SECRET.as_str().to_string()),
 			grant_type: ("authorization_code".to_string()),
-			redirect_uri: (DOMAIN.as_str().to_string())
+			redirect_uri: (DOMAIN.as_str().to_string()) + "/connected"
 		};
 	}
 	//println!("{:?}", data);
@@ -199,9 +199,9 @@ async fn main() -> io::Result<()> {
 		println!("Server starting in prod mode ...");
 		let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
 		builder
-			.set_private_key_file("/etc/letsencrypt/live/protocole-omega.tech/privkey.pem", SslFiletype::PEM)
+			.set_private_key_file("/app/privkey.pem", SslFiletype::PEM)
 			.unwrap();
-		builder.set_certificate_chain_file("/etc/letsencrypt/live/protocole-omega.tech/fullchain.pem").unwrap();
+		builder.set_certificate_chain_file("/app/fullchain.pem").unwrap();
 	
 		HttpServer::new(move || {
 			App::new()

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  omega:
+    build:
+      context: omega
+      dockerfile: Dockerfile
+    hostname: protocole_omega
+    container_name: protocole_omega
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./omega/omega.db:/app/omega.db
+
+  oauth:
+    build:
+      context: oauth
+      dockerfile: Dockerfile
+    hostname: oauth
+    container_name: oauth
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./omega/omega.db:/app/omega.db
+      #- file_privkey:/app/cert/privkey.cert
+      #- file_fullchain:/app/cert/fullchain.cert
+    ports:
+      - "80:80"
