@@ -588,6 +588,23 @@ async def main():
     number = int(cursor.execute(f"SELECT seq FROM 'sqlite_sequence' WHERE name='users'").fetchone()[0])
     if (not number):
         await asyncio.sleep(5)
+        new = cursor.execute(f"SELECT discord_id,intra_id FROM 'new_users'").fetchall()
+        for current in new:
+                id = current[0]
+                login = current[1]
+
+                print(f"____________________\nWe have now add : {id} {login}")
+                cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
+                db.commit()
+                dobble_login = cursor.execute(f"SELECT discord_id FROM 'users' WHERE intra_id='{login}'").fetchall()
+                for dobble in dobble_login:
+                    await disconect(dobble[0])
+                cursor.execute(f"DELETE FROM users WHERE intra_id='{login}'")
+                cursor.execute(f"DELETE FROM new_users WHERE discord_id={id} and intra_id='{login}'")
+                db.commit()
+                await update(login,id)
+                cursor.execute(f"INSERT INTO 'users' (discord_id, intra_id) VALUES ({id},'{login}')")
+                db.commit()
     while (i <= number):
         new = cursor.execute(f"SELECT discord_id,intra_id FROM 'new_users'").fetchall()
         if (not new):
