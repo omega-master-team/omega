@@ -81,21 +81,3 @@ Les commandes suivantes servent a la configuration des differentes options du bo
 ### `/nick_reset` : Suppression des politique de nomage sur le serveur
 
 ![image](https://user-images.githubusercontent.com/73013583/217359712-2807b613-cb4d-4a41-8b6e-c0bd3465bf34.png)
-
-## Site
-
-```bash
-cd oauth
-cargo build --release
-env API_UID= API_SECRET= API_REDIRECT= DB_FILE=../omega.db ./target/release/oauth
-```
-
-## Docker
-
-Run le service omega avec son site oauth2. Check toutes les minutes si les 2 services sont on.
-
-Sinon le service (docker) s'arrete.
-
-```bash
-docker build -t docker_protocole_omega . && (docker container prune || true) &&  docker run --name docker_protocole_omega --volume=${PWD}/omega.db:/omega.db -e API_UID= -e API_SECRET= -e API_REDIRECT=http://omega.42lyon.fr:4242/connected -e DB_FILE=./omega.db -p 4242:4242 docker_protocole_omega
-```
