@@ -1,20 +1,20 @@
 # Project Omega
 
 ## Concept de base
-Le bot a pour but de syncroniser automatiquement les roles discord aux differents items present sur [l'intranet](https://profile.intra.42.fr). Il supporte actuellement les items suivant :
+Le bot a pour but de synchroniser automatiquement les roles discord aux differents items présents sur [l'intranet](https://profile.intra.42.fr). Il supporte actuellement les items suivants :
 - Cursus
 - Groupes
 - Projects
-- Coalition
+- Coalitions
 - Années
 
-Il permet egalement de definir une politique de nommage permettant d'uniformiser le nom des membres.
+Il permet également de définir une politique de nommage permettant d'uniformiser le nom des membres.
 
 ## Etre pris en compte par protocole Omega
 
-Executez la commande /login puis suivre l'oauth sur le lien qui vous sera transmit.
+Executer la commande `/login` puis suivre l'oauth sur le lien qui vous sera transmis.
 
-Cette manipulation n'est necessaire qu'une seule fois par étudiant
+Cette manipulation n'est nécessaire qu'une seule fois par étudiant
 
 ___
 
@@ -47,9 +47,9 @@ make
 ```
 **Attention:** le port exposé dans le `docker-compose.yml` ne doit pas être utilisé.
 
-**Note:** le build prend quelques minutes (celon la co et le cpu).
+**Note:** le build prend quelques minutes (selon la connexion et le cpu).
 
-## Détails lié à la mise en production
+## Détails liés à la mise en production
 
 > Pour lancer le projet en production, il faut:
 > - dans le `.env`, mettre `MODE=PROD`
@@ -59,62 +59,61 @@ make
 ___
 
 # Administrer un serveur sous Project Omega
-Les commandes suivantes servent a la configuration des differentes options du bot. Elles peuvent etre effectuer par tous membres possedant les droits administrateur sur le serveur.
+Les commandes suivantes servent à la configuration des différentes options du bot. Elles peuvent être effectuées par tout membre possédant les droits administrateur sur le serveur.
 
-**Attention** les configurations sont unique, chaque serveur possede la sienne.
-
+**Attention** les configurations sont uniques, chaque serveur possède la sienne.
 
 ## Les commandes de configuration
 
 ### `/sync` : *Configuration globale*
 
-> Elle vous permettra de definir l'item a syncroniser
+> Elle vous permettra de définir l'item à synchroniser
 
 ![image](https://user-images.githubusercontent.com/73013583/217251656-c52517a0-d417-4f47-a2c5-e57d7276a841.png)
 
-> Son identifiant sur l'intranet (dans le cas de l'année il faut mettre l'année d'enter a l'ecole au lieu d'un id)
+> Son identifiant sur l'intranet (dans le cas de l'année il faut mettre l'année d'entrée à l'ecole au lieu d'un id)
 
 ![image](https://user-images.githubusercontent.com/73013583/217251919-783fa14f-a457-454d-9761-f28ef995c58a.png)
 
-> L'identifiant du role discord correspondant
+> L'identifiant du rôle discord correspondant
 
 ![image](https://user-images.githubusercontent.com/73013583/217252106-451343f9-83f9-4dfd-8176-89995a599c90.png)
 
-> Et enfin vous pouvez definir l'id du campus necessaire pour obtenir le role. (pour definir tous les campus vous pouvez entrer 0)
+> Et enfin vous pouvez définir l'id du campus nécessaire pour obtenir le rôle. (pour définir tous les campus vous pouvez entrer 0)
 
 ![image](https://user-images.githubusercontent.com/73013583/217252464-bc7aa4cd-dd22-4c71-b4f5-1b1b11eb4601.png)
 
 ### `/sync_project` : *Syncronisation des projets*
 
-> Elle vous permettra de definir son identifient sur l'intranet
+> Elle vous permettra de définir son identifiant sur l'intranet
 
 ![image](https://user-images.githubusercontent.com/73013583/217271621-98cba57a-4c63-4a0f-bb15-6e74f9f4d86f.png)
 
-> D'autoriser ou non les differents statuts possible avec le projet
+> D'autoriser ou non les differents statuts possibles avec le projet
 
 ![image](https://user-images.githubusercontent.com/73013583/217272838-bbe0ddc0-efe3-440b-b054-e2dbd39e4a42.png)
 
-> De definir l'identifiant du role discord correspondant
+> De définir l'identifiant du rôle discord correspondant
 
 ![image](https://user-images.githubusercontent.com/73013583/217272356-73a8b784-4e54-492f-a178-66fe12a2a064.png)
 
-> Et enfin vous pouvez definir l'id du campus necessaire pour obtenir le role. (Pour definir tous les campus vous pouvez entrer 0)
+> Et enfin vous pouvez définir l'id du campus necessaire pour obtenir le rôle. (Pour définir tous les campus vous pouvez entrer 0)
 
 ![image](https://user-images.githubusercontent.com/73013583/217272447-f76af907-2d3a-48a6-b0bc-bab761ad730b.png)
 
-### `/nick` : *Definition de la politique de nommage*
+### `/nick` : *Définition de la politique de nommage*
 
 ![Screenshot from 2023-02-07 23-39-16](https://user-images.githubusercontent.com/73013583/217383303-a51f6b7e-9099-417c-a029-92d66627e6e6.png)
 
-> L'argument **naming_patern** permet de configurer le patern de nommage. (&login et &campus sont des valeurs dynamiques elle seront remplacee par leur valeur pour chaque etudiants).
+> L'argument **naming_patern** permet de configurer le patern de nommage. (&login et &campus sont des valeurs dynamiques elles seront remplacées par leur valeur pour chaque étudiant).
 
-> L'argument **campus** correspond a l'id du campus sur lesquels la politique va s'appliquer. (pour definir tout les campus vous pouvez entrer 0).
+> L'argument **campus** correspond à l'id du campus sur lesquel la politique va s'appliquer. (Pour définir tous les campus vous pouvez entrer 0).
 
 ## Supprimer sa configuration
 
 ### `/delete` : *Suppression de la configuration*
 
-> Elle vous permettra de specifier le type de sychronisation a interrompre
+> Elle vous permettra de spécifier le type de sychronisation à interrompre
 
 ![image](https://user-images.githubusercontent.com/73013583/217357888-95d4e890-b0f4-4ec1-a7bb-012226665479.png)
 
@@ -126,7 +125,7 @@ Les commandes suivantes servent a la configuration des differentes options du bo
 
 ![image](https://user-images.githubusercontent.com/73013583/217358701-47730a2c-319a-4bba-8b04-90a6569f4648.png)
 
-### `/nick_reset` : Suppression des politique de nomage sur le serveur
+### `/nick_reset` : Suppression des politiques de nommage sur le serveur
 
 ![image](https://user-images.githubusercontent.com/73013583/217359712-2807b613-cb4d-4a41-8b6e-c0bd3465bf34.png)
 
@@ -134,4 +133,4 @@ ___
 
 # Notes des devs
 
-> La version actuel (beta) a une base de données litesql3 (changement certainement à venir [mariadb])
+> La version actuelle (beta) a une base de données litesql3 (changement certainement à venir [mariadb])
