@@ -656,4 +656,4 @@ async def on_ready():
     while (1):
         await main()
 
-client.run("MTA4NDI0NjkzMzIyNjQwMTgxMg.GDJKTg.7HFD0NPq3vVjdcaFYrMHEUqfdfhaLFzVTVjr_k")   #(os.getenv('BOT_TOKEN'))
+client.run(os.getenv('BOT_TOKEN'))
