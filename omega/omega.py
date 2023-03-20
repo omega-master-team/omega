@@ -255,6 +255,20 @@ async def logout_admin(command, message):
     await message.channel.send("Success")
     await pdt.delete()
 
+async def stats(command, message):
+    i = 0
+    msg = ""
+    async for current in client.fetch_guilds():
+        i += 1
+        send = False
+        msg = f"{msg}\n{current.name}|{current.id}"
+        if (i>25):
+            send = True
+            i = 0
+            await message.channel.send(msg)
+    if (send == False):
+        await message.channel.send(msg)
+
 @client.event
 async def on_message(message):
     if (message.author == client.user):
@@ -270,6 +284,8 @@ async def on_message(message):
                 await sync_admin(mp[5:], message)
             elif mp[:6] == "logout":
                 await logout_admin(mp[7:], message)
+            elif mp[:5] == "stats":
+                await stats(mp[6:], message)
             else:
                 await help(message)
         else:
@@ -640,4 +656,4 @@ async def on_ready():
     while (1):
         await main()
 
-client.run(os.getenv('BOT_TOKEN'))
+client.run("MTA4NDI0NjkzMzIyNjQwMTgxMg.GDJKTg.7HFD0NPq3vVjdcaFYrMHEUqfdfhaLFzVTVjr_k")   #(os.getenv('BOT_TOKEN'))
