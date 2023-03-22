@@ -264,7 +264,7 @@ async def sync_admin(command, message):
     intra_id = command[19:]
     pdt = await message.channel.send("Waiting...")
     await update(intra_id,int(discord_id))
-    cursor.execute(f"INSERT INTO users (discord_id,intra_id) VALUES ({discord_id},'{intra_id}')")
+    cursor.execute(f"INSERT INTO new_users (discord_id,intra_id) VALUES ({discord_id},'{intra_id}')")
     db.commit()
     await message.channel.send("Success")
     await pdt.delete()
