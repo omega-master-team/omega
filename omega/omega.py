@@ -206,6 +206,7 @@ async def help(message):
     await message.channel.send(embed=embed)
 
 async def stats(message):
+    wait = await message.channel.send("waiting...")
     student_count = len(cursor.execute(f"SELECT campus_id FROM 'users'").fetchall())
     nick_count = len(cursor.execute(f"SELECT campus_id FROM 'nick'").fetchall())
     cursus_count = len(cursor.execute(f"SELECT campus_id FROM 'cursus'").fetchall())
@@ -231,6 +232,7 @@ async def stats(message):
     embed.add_field(name = "__Groups__", value = f"{groups_count}", inline = False)
     embed.add_field(name = "__Years__", value = f"{years_count}", inline = False)
     await message.channel.send(embed=embed)
+    await wait.delete()
 
 async def send(command, message):
     id = command[:18]
