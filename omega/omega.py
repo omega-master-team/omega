@@ -265,7 +265,7 @@ async def stats(command, message):
         i += 1
         current = await client.fetch_guild(int(current.id))
         owner = await client.fetch_user(int(current.owner_id))
-        msg = f"{msg}\n{current.name} | {current.id} | {owner} | {current.approximate_member_count} members"
+        msg = f"{msg}\n{current.name} | {current.id} | {owner} | {current.approximate_member_count} membres"
         if (i>25):
             send = True
             i = 0
