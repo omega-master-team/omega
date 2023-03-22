@@ -640,7 +640,7 @@ async def main():
                 await asyncio.sleep(0.5)
 
             except :
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.15)
             i = i + 1
         else :
             for current in new:
