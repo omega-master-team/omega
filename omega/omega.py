@@ -206,19 +206,30 @@ async def help(message):
     await message.channel.send(embed=embed)
 
 async def stats(message):
-    student_list = cursor.execute(f"SELECT intra_id FROM 'users'").fetchall()
-    student_count = len(student_list)
+    student_count = len(cursor.execute(f"SELECT campus_id FROM 'users'").fetchall())
+    nick_count = len(cursor.execute(f"SELECT campus_id FROM 'nick'").fetchall())
+    cursus_count = len(cursor.execute(f"SELECT campus_id FROM 'cursus'").fetchall())
+    coalition_count = len(cursor.execute(f"SELECT campus_id FROM 'coa'").fetchall())
+    project_count = len(cursor.execute(f"SELECT campus_id FROM 'project'").fetchall())
+    groups_count = len(cursor.execute(f"SELECT campus_id FROM 'groups'").fetchall())
+    years_count = len(cursor.execute(f"SELECT campus_id FROM 'years'").fetchall())
+    global_count = cursus_count + coalition_count + project_count + groups_count + years_count + nick_count
     server_count = 0
     async for current in client.fetch_guilds():
         server_count += 1
-    
     title = f"Stats tools for Potocole Omega"
     color = random.randint(0, 16777215)
     color = Colour(color) 
     embed = Embed(title = f"{title}",color = color)
-    embed.add_field(name = "Student count", value = f"{student_count}", inline = False)
-    embed.add_field(name = "Server count", value = f"{server_count}", inline = False)
-    
+    embed.add_field(name = "__Student__", value = f"{student_count}", inline = False)
+    embed.add_field(name = "__Server__", value = f"{server_count}", inline = False)
+    embed.add_field(name = "__Global__", value = f"{global_count}", inline = False)
+    embed.add_field(name = "__Nick__", value = f"{nick_count}", inline = False)
+    embed.add_field(name = "__Cursus__", value = f"{cursus_count}", inline = False)
+    embed.add_field(name = "__COA__", value = f"{coalition_count}", inline = False)
+    embed.add_field(name = "__Project__", value = f"{project_count}", inline = False)
+    embed.add_field(name = "__Groups__", value = f"{groups_count}", inline = False)
+    embed.add_field(name = "__Years__", value = f"{years_count}", inline = False)
     await message.channel.send(embed=embed)
 
 async def send(command, message):
