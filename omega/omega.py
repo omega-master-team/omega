@@ -196,12 +196,29 @@ async def help(message):
     color = Colour(color) 
     embed = Embed(title = f"{title}",color = color)
     embed.add_field(name = "___________", value = f"utilities", inline = False)
+    embed.add_field(name = "stats", value = f"envoie la liste des serveur du bot", inline = False)
     embed.add_field(name = "send", value = f"envoie un mp avec le bot", inline = False)
     embed.add_field(name = "sync", value = f"syncronise un utilisateur avec omega", inline = False)
     embed.add_field(name = "logout", value = f"déconecte un utilisateur", inline = False)
     embed.add_field(name = "play", value = f"set le statut du bot", inline = False)
-    embed.add_field(name = "stats", value = f"envoie la liste des serveur du bot", inline = False)
+    embed.add_field(name = "list", value = f"envoie la liste des serveur du bot", inline = False)
     embed.add_field(name = "join", value = f"genere une invitation vers le serveur", inline = False)
+    await message.channel.send(embed=embed)
+
+async def stats(message):
+    student_list = cursor.execute(f"SELECT intra_id FROM 'users'").fetchall()
+    student_count = len(student_list)
+    server_count = 0
+    async for current in client.fetch_guilds():
+        server_count += 1
+    
+    title = f"Stats tools for Potocole Omega"
+    color = random.randint(0, 16777215)
+    color = Colour(color) 
+    embed = Embed(title = f"{title}",color = color)
+    embed.add_field(name = "Student count", value = f"{student_count}", inline = False)
+    embed.add_field(name = "Server count", value = f"{server_count}", inline = False)
+    
     await message.channel.send(embed=embed)
 
 async def send(command, message):
@@ -257,7 +274,7 @@ async def logout_admin(command, message):
     await message.channel.send("Success")
     await pdt.delete()
 
-async def stats(command, message):
+async def list(message):
     i = 0
     msg = ""
     send = False
@@ -301,7 +318,9 @@ async def on_message(message):
             elif mp[:6] == "logout":
                 await logout_admin(mp[7:], message)
             elif mp[:5] == "stats":
-                await stats(mp[6:], message)
+                await stats(message)
+            elif mp[:4] == "list":
+                await list(message)
             elif mp[:4] == "join":
                 await admin_join(mp[5:], message)
             else:
