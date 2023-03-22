@@ -224,7 +224,7 @@ async def stats(message):
     embed = Embed(title = f"{title}",color = color)
     embed.add_field(name = "__Student__", value = f"{student_count}", inline = True)
     embed.add_field(name = "__Server__", value = f"{server_count}", inline = True)
-    embed.add_field(name = "__Global__", value = f"{global_count}", inline = False)
+    embed.add_field(name = "__Total synced items__", value = f"{global_count}", inline = False)
     embed.add_field(name = "__Nick__", value = f"{nick_count}", inline = True)
     embed.add_field(name = "__Cursus__", value = f"{cursus_count}", inline = True)
     embed.add_field(name = "__COA__", value = f"{coalition_count}", inline = True)
