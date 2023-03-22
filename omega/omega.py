@@ -196,7 +196,7 @@ async def help(message):
     color = Colour(color) 
     embed = Embed(title = f"{title}",color = color)
     embed.add_field(name = "___________", value = f"utilities", inline = False)
-    embed.add_field(name = "stats", value = f"envoie la liste des serveur du bot", inline = False)
+    embed.add_field(name = "stats", value = f"donne des chifres sur l'utilisation du bot", inline = False)
     embed.add_field(name = "send", value = f"envoie un mp avec le bot", inline = False)
     embed.add_field(name = "sync", value = f"syncronise un utilisateur avec omega", inline = False)
     embed.add_field(name = "logout", value = f"déconecte un utilisateur", inline = False)
