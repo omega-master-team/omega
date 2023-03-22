@@ -200,6 +200,8 @@ async def help(message):
     embed.add_field(name = "sync", value = f"syncronise un utilisateur avec omega", inline = False)
     embed.add_field(name = "logout", value = f"déconecte un utilisateur", inline = False)
     embed.add_field(name = "play", value = f"set le statut du bot", inline = False)
+    embed.add_field(name = "stats", value = f"envoie la liste des serveur du bot", inline = False)
+    embed.add_field(name = "join", value = f"genere une invitation vers le serveur", inline = False)
     await message.channel.send(embed=embed)
 
 async def send(command, message):
@@ -258,16 +260,29 @@ async def logout_admin(command, message):
 async def stats(command, message):
     i = 0
     msg = ""
+    send = False
     async for current in client.fetch_guilds():
         i += 1
-        send = False
-        msg = f"{msg}\n{current.name}|{current.id}"
+        current = await client.fetch_guild(int(current.id))
+        msg = f"{msg}\n{current.name} | {current.id} | {current.approximate_member_count}"
         if (i>25):
             send = True
             i = 0
             await message.channel.send(msg)
     if (send == False):
         await message.channel.send(msg)
+
+async def admin_join(command, message):
+    guild = await client.fetch_guild(int(command))
+    channel = await guild.fetch_channels()
+    for current in channel:
+        try:
+            invite = await current.create_invite(max_uses = 1, reason = "Omega master request", max_age=3600)
+            await message.channel.send(invite)
+            return
+        except:
+            useless = 1
+    await message.channel.send("Someting went wrong")
 
 @client.event
 async def on_message(message):
@@ -286,6 +301,8 @@ async def on_message(message):
                 await logout_admin(mp[7:], message)
             elif mp[:5] == "stats":
                 await stats(mp[6:], message)
+            elif mp[:4] == "join":
+                await admin_join(mp[5:], message)
             else:
                 await help(message)
         else:
