@@ -207,7 +207,7 @@ async def help(message):
 
 async def stats(message):
     wait = await message.channel.send("waiting...")
-    student_count = len(cursor.execute(f"SELECT campus_id FROM 'users'").fetchall())
+    student_count = len(cursor.execute(f"SELECT intra_id FROM 'users'").fetchall())
     nick_count = len(cursor.execute(f"SELECT campus_id FROM 'nick'").fetchall())
     cursus_count = len(cursor.execute(f"SELECT campus_id FROM 'cursus'").fetchall())
     coalition_count = len(cursor.execute(f"SELECT campus_id FROM 'coa'").fetchall())
