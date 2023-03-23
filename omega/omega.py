@@ -28,19 +28,17 @@ tree = app_commands.CommandTree(client)
 redirect = f"{os.getenv('DOMAIN')}/api?code="
 
 async def admin_check(id):
-    guild = await client.fetch_guild(int(1084295027783639080))
-    print(guild)
-    member = guild.get_member(int(id))
-    print(member)
-    if ("1088563072467210291" in member.role):
+    guild = client.get_guild(int(1084295027783639080))
+    member = guild.get_member(id)
+    if ("1088563072467210291" in member.roles):
         return(5)
-    if ("1084386167501377538" in member.role):
+    if ("1084386167501377538" in member.roles):
         return(4)
-    if ("1088563502278512791" in member.role):
+    if ("1088563502278512791" in member.roles):
         return(3)
-    if ("1088564838072070175" in member.role):
+    if ("1088564838072070175" in member.roles):
         return(2)
-    if ("1088563364621459627" in member.role):
+    if ("1088563364621459627" in member.roles):
         return(1)
     return(0)
 
@@ -368,7 +366,7 @@ async def on_message(message):
                 await help(message)
         else:
             channel = await client.fetch_channel(1088582109343514664)
-            embed = Embed(title = f"Mp from : {message.author}", description=f"{message.content}")
+            embed = Embed(title = f"Ticket from : {message.author}", description=f"{message.content}")
             embed.set_footer(text = f"id : {message.author.id}")
             if (str(message.author.avatar) != "None"):
                 embed.set_thumbnail(url=message.author.avatar.url)
@@ -732,4 +730,4 @@ async def on_ready():
     while (1):
         await main()
 
-client.run(os.getenv('BOT_TOKEN'))
+client.run ("MTA4NDI0NjkzMzIyNjQwMTgxMg.GDJKTg.7HFD0NPq3vVjdcaFYrMHEUqfdfhaLFzVTVjr_k") #(os.getenv('BOT_TOKEN'))
