@@ -236,8 +236,11 @@ async def stats(message):
     await wait.delete()
 
 async def send(command, message):
-    id = command[:18]
-    content = command[19:]
+    command = command.split(" ")
+    id = command[0]
+    for current in command[1:]:
+        content = content.join(" ")
+        content = content.join(current)
     member = await client.fetch_user(id)
     embed = Embed(title = f"Mesage from the Omega Master : {message.author}", description=f"{content}")
     if (str(message.author.avatar) != "None"):
@@ -316,7 +319,6 @@ async def admin_join(command, message):
         except:
             useless = 1
     await message.channel.send("Someting went wrong")
-
 
 async def srv_leave(command, message):
     guild = await client.fetch_guild(int(command))
