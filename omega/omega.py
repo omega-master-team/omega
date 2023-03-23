@@ -32,7 +32,7 @@ async def admin_check(id):
     member = guild.get_member(id)
     roles_id = []
     for role in member.roles:
-        roles_id = roles_id.append(role.id)
+        roles_id.append(role.id)
     if ("1088563072467210291" in roles_id):
         return(5)
     if ("1084386167501377538" in roles_id):
