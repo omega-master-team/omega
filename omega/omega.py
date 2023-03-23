@@ -43,9 +43,6 @@ async def admin_check(id):
     return(0)
 
 def omega_cooldown(interaction: Interaction):
-    level = await admin_check(interaction.user.id)
-    if level >= 1:
-        return None
     return app_commands.Cooldown(3, 3600)
 
 #####################################################################################################################################################
