@@ -343,7 +343,7 @@ async def on_message(message):
     if (message.author == client.user):
         return
     if (str(message.channel.type) == "private"):
-        level = admin_check(message.author.id)
+        level = await admin_check(message.author.id)
         if (level >= 1):
             mp = message.content
             if mp[:5] == "stats" and level >= 1:
