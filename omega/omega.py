@@ -370,7 +370,7 @@ async def on_message(message):
                 await sync_admin(mp[5:], message)
             elif mp[:6] == "logout" and level >= 4:
                 await logout_admin(mp[7:], message)
-            else:
+            elif mp[:4] == "help":
                 await help(message)
         else:
             channel = await client.fetch_channel(1088582109343514664)
