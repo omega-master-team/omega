@@ -223,7 +223,7 @@ async def help(message):
     embed = Embed(title = f"{title}",color = color)
     embed.add_field(name = "___________", value = f"utilities", inline = False)
     if level >= 5:
-        embed.add_field(name = "___________", value = f"your are the gods", inline = False)
+        embed.add_field(name = "__ROOT__", value = f"your are the master", inline = False)
     if level >= 4:
         embed.add_field(name = "sync", value = f"syncronise un utilisateur avec omega", inline = False)
         embed.add_field(name = "logout", value = f"déconecte un utilisateur", inline = False)
