@@ -239,7 +239,7 @@ async def send(command, message):
     command = command.split(" ")
     id = command[0]
     del command[0]
-    content = command.join(" ")
+    content = " ".join(command)
     member = await client.fetch_user(id)
     embed = Embed(title = f"Mesage from the Omega Master : {message.author}", description=f"{content}")
     if (str(message.author.avatar) != "None"):
