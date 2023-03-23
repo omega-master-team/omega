@@ -25,11 +25,26 @@ intents.members = True
 client = Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-omega_master = [626861778030034945,289850175713837058,403231056003596298]
 redirect = f"{os.getenv('DOMAIN')}/api?code="
 
+async def admin_check(id):
+    guild = await client.fetch_guild(1084295027783639080)
+    member = await guild.get_member(int(id))
+    if ("1088563072467210291" in member.role):
+        return(5)
+    if ("1084386167501377538" in member.role):
+        return(4)
+    if ("1088563502278512791" in member.role):
+        return(3)
+    if ("1088564838072070175" in member.role):
+        return(2)
+    if ("1088563364621459627" in member.role):
+        return(1)
+    return(0)
+
 def omega_cooldown(interaction: Interaction):
-    if interaction.user.id in omega_master:
+    level = admin_check(interaction.user.id)
+    if level >= 1:
         return None
     return app_commands.Cooldown(3, 3600)
 
@@ -104,7 +119,8 @@ async def ping(interaction: Interaction):
     app_commands.Choice(name = 'years', value = 4),
 ])
 async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id: int, role_id: str, campus_id: int):
-    if (not interaction.user.guild_permissions.administrator and not interaction.user.id in omega_master):
+    level = admin_check(interaction.user.id)
+    if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
     cursor.execute(f"INSERT INTO {type.name} (campus_id,intra_id, guild_id, discord_id) VALUES ({campus_id},{intra_id},{interaction.guild_id},{int(role_id)})")
@@ -128,7 +144,8 @@ async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id
     app_commands.Choice(name = 'Deny', value = 0),
 ])
 async def sync_project(interaction: Interaction, intra_id: int, in_progress: app_commands.Choice[int], finished: app_commands.Choice[int], validated: app_commands.Choice[int], role_id: str, campus_id: int):
-    if (not interaction.user.guild_permissions.administrator and not interaction.user.id in omega_master):
+    level = admin_check(interaction.user.id)
+    if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
     
@@ -140,7 +157,8 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
 @tree.command(name = "nick", description = "set the nick parameters on the sever (&login and &campus works)")
 @app_commands.guild_only()
 async def nick(interaction: Interaction,namming_pattern: str,campus_id: int):
-    if (not interaction.user.guild_permissions.administrator and not interaction.user.id in omega_master):
+    level = admin_check(interaction.user.id)
+    if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
     cursor.execute(f"INSERT INTO nick (campus_id,format,guild_id) VALUES ({campus_id},'{namming_pattern}',{interaction.guild.id})")
@@ -155,7 +173,8 @@ async def nick(interaction: Interaction,namming_pattern: str,campus_id: int):
 @tree.command(name = "nick_reset", description = "reset the nick parameters on the sever")
 @app_commands.guild_only()
 async def nick_reset(interaction: Interaction):
-    if (not interaction.user.guild_permissions.administrator and not interaction.user.id in omega_master):
+    level = admin_check(interaction.user.id)
+    if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
     cursor.execute(f"DELETE FROM nick WHERE guild_id={interaction.guild.id}")
@@ -178,7 +197,8 @@ async def nick_reset(interaction: Interaction):
     app_commands.Choice(name = 'role_id', value = 2),
 ])
 async def delete(interaction: Interaction,type: app_commands.Choice[int], id_from: app_commands.Choice[int], id: str):
-    if (not interaction.user.guild_permissions.administrator and not interaction.user.id in omega_master):
+    level = admin_check(interaction.user.id)
+    if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
     if (id_from.name == "role_id"):
@@ -332,24 +352,25 @@ async def on_message(message):
     if (message.author == client.user):
         return
     if (str(message.channel.type) == "private"):
-        if (message.author.id in omega_master):
+        level = admin_check(message.author.id)
+        if (level >= 1):
             mp = message.content
-            if mp[:4] == "send":
-                await send(mp[5:], message)
-            elif mp[:4] == "play":
-                await status(mp[5:], message)
-            elif mp[:4] == "sync":
-                await sync_admin(mp[5:], message)
-            elif mp[:6] == "logout":
-                await logout_admin(mp[7:], message)
-            elif mp[:5] == "stats":
+            if mp[:5] == "stats" and level >= 1:
                 await stats(message)
-            elif mp[:4] == "list":
+            elif mp[:4] == "send" and level >= 2:
+                await send(mp[5:], message)
+            elif mp[:4] == "list" and level >= 3:
                 await list(message)
-            elif mp[:4] == "join":
+            elif mp[:4] == "join" and level >= 3:
                 await admin_join(mp[5:], message)
-            elif mp[:5] == "leave":
+            elif mp[:5] == "leave" and level >= 4:
                 await srv_leave(mp[6:], message)
+            elif mp[:4] == "play" and level >= 4:
+                await status(mp[5:], message)
+            elif mp[:4] == "sync" and level >= 4:
+                await sync_admin(mp[5:], message)
+            elif mp[:6] == "logout" and level >= 4:
+                await logout_admin(mp[7:], message)
             else:
                 await help(message)
         else:
@@ -705,7 +726,6 @@ async def main():
                 await update(login,id)
                 cursor.execute(f"INSERT INTO 'users' (discord_id, intra_id) VALUES ({id},'{login}')")
                 db.commit()
-
 
 ##################################################setup discord and call token##################################################################
 
