@@ -24,7 +24,6 @@ intents = Intents.default()
 intents.members = True
 client = Client(intents=intents)
 tree = app_commands.CommandTree(client)
-
 redirect = f"{os.getenv('DOMAIN')}/api?code="
 
 async def admin_check(id):
@@ -357,7 +356,7 @@ async def srv_leave(command, message):
 async def on_message(message):
     if (message.author == client.user):
         return
-    if (str(message.channel.type) == "private" or message.channel.id == 1088601034265481398):
+    if (str(message.channel.type) == "private"):
         level = await admin_check(message.author.id)
         if (level >= 1):
             mp = message.content
@@ -388,12 +387,6 @@ async def on_message(message):
                 embed.set_thumbnail(url=message.author.avatar.url)
             await channel.send(embed=embed)
             await message.channel.send(f"Succesfully send to the administrator")
-    if message.channel.id == 1088582109343514664:
-        level = await admin_check(message.author.id)
-        if level >= 2:
-            mp = message.content
-            print(mp)
-            await send(mp, message)
 
 #####################################################################################################################################################
 
@@ -752,4 +745,4 @@ async def on_ready():
     while (1):
         await main()
 
-client.run(os.getenv('BOT_TOKEN'))
+client.run("MTA4NDI0NjkzMzIyNjQwMTgxMg.GDJKTg.7HFD0NPq3vVjdcaFYrMHEUqfdfhaLFzVTVjr_k") #(os.getenv('BOT_TOKEN'))
