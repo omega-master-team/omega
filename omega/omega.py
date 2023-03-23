@@ -267,12 +267,6 @@ async def send(command, message):
         await message.channel.send(f"Fail to mp {member}")
         return
     await message.channel.send(f"Succesfully send to {member}")
-    if (message.author != ngennaro):
-        embed = Embed(title = f"Mesage from: {message.author} to: {member}", description=f"{content}")
-        if (str(message.author.avatar) != "None"):
-            embed.set_thumbnail(url=message.author.avatar.url)
-        embed.set_footer(text = f"id : {message.author.id} , {member.id}")
-        await ngennaro.send(embed=embed)
 
 async def status(command, message):
     game = Game(command)
@@ -371,11 +365,12 @@ async def on_message(message):
             else:
                 await help(message)
         else:
+            channel = await client.fetch_channel(1088582109343514664)
             embed = Embed(title = f"Mp from : {message.author}", description=f"{message.content}")
             embed.set_footer(text = f"id : {message.author.id}")
             if (str(message.author.avatar) != "None"):
                 embed.set_thumbnail(url=message.author.avatar.url)
-            await ngennaro.send(embed=embed)
+            await channel.send(embed=embed)
             await message.channel.send(f"Succesfully send to the administrator")
 
 #####################################################################################################################################################
@@ -731,8 +726,6 @@ async def on_ready():
     await tree.sync()
     game = Game(name=f"someone else broke it")
     await client.change_presence(status=Status.online, activity=game)
-    global ngennaro
-    ngennaro = await client.fetch_user(626861778030034945)
     print(f"We have logged in as {client.user}.")
     while (1):
         await main()
