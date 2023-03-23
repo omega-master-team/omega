@@ -361,6 +361,7 @@ async def on_message(message):
         level = await admin_check(message.author.id)
         if (level >= 1):
             mp = message.content
+            print(mp)
             if mp[:5] == "stats" and level >= 1:
                 await stats(message)
             elif mp[:4] == "send" and level >= 2:
@@ -391,6 +392,7 @@ async def on_message(message):
         level = await admin_check(message.author.id)
         if level >= 2:
             mp = message.content
+            print(mp)
             await send(mp, message)
 
 #####################################################################################################################################################
