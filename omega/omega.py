@@ -30,15 +30,18 @@ redirect = f"{os.getenv('DOMAIN')}/api?code="
 async def admin_check(id):
     guild = client.get_guild(int(1084295027783639080))
     member = guild.get_member(id)
-    if ("1088563072467210291" in member.roles):
+    roles_id = []
+    for role in member.roles:
+        roles_id = roles_id.append(role.id)
+    if ("1088563072467210291" in roles_id):
         return(5)
-    if ("1084386167501377538" in member.roles):
+    if ("1084386167501377538" in roles_id):
         return(4)
-    if ("1088563502278512791" in member.roles):
+    if ("1088563502278512791" in roles_id):
         return(3)
-    if ("1088564838072070175" in member.roles):
+    if ("1088564838072070175" in roles_id):
         return(2)
-    if ("1088563364621459627" in member.roles):
+    if ("1088563364621459627" in roles_id):
         return(1)
     return(0)
 
