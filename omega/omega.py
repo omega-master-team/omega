@@ -238,10 +238,8 @@ async def stats(message):
 async def send(command, message):
     command = command.split(" ")
     id = command[0]
-    content = ""
-    for current in command[1:]:
-        content = content.join(" ")
-        content = content.join(current)
+    del command[0]
+    content = command.join(" ")
     member = await client.fetch_user(id)
     embed = Embed(title = f"Mesage from the Omega Master : {message.author}", description=f"{content}")
     if (str(message.author.avatar) != "None"):
