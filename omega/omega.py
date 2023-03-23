@@ -282,6 +282,16 @@ async def send(command, message):
         await message.channel.send(f"Fail to mp {member}")
         return
     await message.channel.send(f"Succesfully send to {member}")
+    
+    channel = client.get_channel(1088582242290368572)
+    title = f"Mp from {message.author} to {member}"
+    color = random.randint(0, 16777215)
+    color = Colour(color) 
+    embed = Embed(title = f"{title}",color = color, description=f"{content}")
+    embed.set_footer(text = f"recever id : {message.author.id}")
+    if (str(message.author.avatar) != "None"):
+        embed.set_thumbnail(url=message.author.avatar.url)
+    await channel.send(embed=embed)
 
 async def status(command, message):
     game = Game(command)
