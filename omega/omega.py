@@ -475,7 +475,7 @@ async def update(login, id):
                 except:
                         print(f"403 for nick : {login}, on {guild.name}")
         
-        #cursus sync#        
+        #cursus sync#
         data_list = cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM 'cursus' WHERE guild_id='{guild.id}'").fetchall()
         for data in data_list:
             try:
