@@ -321,7 +321,7 @@ async def admin_join(command, message):
 async def srv_leave(command, message):
     guild = await client.fetch_guild(int(command))
     try:
-        guild.leave()
+        await guild.leave()
         await message.channel.send(f"Successfully leave {guild.name}")
     except:
         await message.channel.send("Someting went wrong")
