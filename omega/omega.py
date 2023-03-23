@@ -316,6 +316,15 @@ async def admin_join(command, message):
             useless = 1
     await message.channel.send("Someting went wrong")
 
+
+async def srv_leave(command, message):
+    guild = await client.fetch_guild(int(command))
+    try:
+        guild.leave()
+        await message.channel.send(f"Successfully leave {guild.name}")
+    except:
+        await message.channel.send("Someting went wrong")
+
 @client.event
 async def on_message(message):
     if (message.author == client.user):
@@ -337,6 +346,8 @@ async def on_message(message):
                 await list(message)
             elif mp[:4] == "join":
                 await admin_join(mp[5:], message)
+            elif mp[:5] == "leave":
+                await srv_leave(mp[6:], message)
             else:
                 await help(message)
         else:
