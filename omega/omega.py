@@ -203,6 +203,7 @@ async def help(message):
     embed.add_field(name = "play", value = f"set le statut du bot", inline = False)
     embed.add_field(name = "list", value = f"envoie la liste des serveur du bot", inline = False)
     embed.add_field(name = "join", value = f"genere une invitation vers le serveur", inline = False)
+    embed.add_field(name = "leave", value = f"quitte un serveur", inline = False)
     await message.channel.send(embed=embed)
 
 async def stats(message):
