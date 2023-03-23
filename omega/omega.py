@@ -29,7 +29,9 @@ redirect = f"{os.getenv('DOMAIN')}/api?code="
 
 async def admin_check(id):
     guild = await client.fetch_guild(int(1084295027783639080))
+    print(guild)
     member = guild.get_member(int(id))
+    print(member)
     if ("1088563072467210291" in member.role):
         return(5)
     if ("1084386167501377538" in member.role):
