@@ -238,6 +238,7 @@ async def stats(message):
 async def send(command, message):
     command = command.split(" ")
     id = command[0]
+    content = ""
     for current in command[1:]:
         content = content.join(" ")
         content = content.join(current)
