@@ -390,6 +390,7 @@ async def on_message(message):
     if message.channel.id == 1088582109343514664:
         level = await admin_check(message.author.id)
         if level >= 2:
+            mp = message.content
             await send(mp, message)
 
 #####################################################################################################################################################
