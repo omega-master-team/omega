@@ -24,6 +24,7 @@ intents = Intents.default()
 intents.members = True
 client = Client(intents=intents)
 tree = app_commands.CommandTree(client)
+
 redirect = f"{os.getenv('DOMAIN')}/api?code="
 
 async def admin_check(id):
@@ -360,7 +361,6 @@ async def on_message(message):
         level = await admin_check(message.author.id)
         if (level >= 1):
             mp = message.content
-            print(mp)
             if mp[:5] == "stats" and level >= 1:
                 await stats(message)
             elif mp[:4] == "send" and level >= 2:
@@ -745,4 +745,4 @@ async def on_ready():
     while (1):
         await main()
 
-client.run("MTA4NDI0NjkzMzIyNjQwMTgxMg.GDJKTg.7HFD0NPq3vVjdcaFYrMHEUqfdfhaLFzVTVjr_k") #(os.getenv('BOT_TOKEN'))
+client.run(os.getenv('BOT_TOKEN'))
