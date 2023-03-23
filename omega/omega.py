@@ -357,7 +357,7 @@ async def srv_leave(command, message):
 async def on_message(message):
     if (message.author == client.user):
         return
-    if (str(message.channel.type) == "private"):
+    if (str(message.channel.type) == "private" or message.channel.id == 1088601034265481398):
         level = await admin_check(message.author.id)
         if (level >= 1):
             mp = message.content
@@ -387,6 +387,10 @@ async def on_message(message):
                 embed.set_thumbnail(url=message.author.avatar.url)
             await channel.send(embed=embed)
             await message.channel.send(f"Succesfully send to the administrator")
+    if message.channel.id == 1088582109343514664:
+        level = await admin_check(message.author.id)
+        if level >= 2:
+            await send(mp, message)
 
 #####################################################################################################################################################
 
