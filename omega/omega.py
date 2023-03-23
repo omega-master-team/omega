@@ -43,7 +43,7 @@ async def admin_check(id):
     return(0)
 
 def omega_cooldown(interaction: Interaction):
-    level = admin_check(interaction.user.id)
+    level = await admin_check(interaction.user.id)
     if level >= 1:
         return None
     return app_commands.Cooldown(3, 3600)
@@ -119,7 +119,7 @@ async def ping(interaction: Interaction):
     app_commands.Choice(name = 'years', value = 4),
 ])
 async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id: int, role_id: str, campus_id: int):
-    level = admin_check(interaction.user.id)
+    level = await admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
@@ -144,7 +144,7 @@ async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id
     app_commands.Choice(name = 'Deny', value = 0),
 ])
 async def sync_project(interaction: Interaction, intra_id: int, in_progress: app_commands.Choice[int], finished: app_commands.Choice[int], validated: app_commands.Choice[int], role_id: str, campus_id: int):
-    level = admin_check(interaction.user.id)
+    level = await admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
@@ -157,7 +157,7 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
 @tree.command(name = "nick", description = "set the nick parameters on the sever (&login and &campus works)")
 @app_commands.guild_only()
 async def nick(interaction: Interaction,namming_pattern: str,campus_id: int):
-    level = admin_check(interaction.user.id)
+    level = await admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
@@ -173,7 +173,7 @@ async def nick(interaction: Interaction,namming_pattern: str,campus_id: int):
 @tree.command(name = "nick_reset", description = "reset the nick parameters on the sever")
 @app_commands.guild_only()
 async def nick_reset(interaction: Interaction):
-    level = admin_check(interaction.user.id)
+    level = await admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
@@ -197,7 +197,7 @@ async def nick_reset(interaction: Interaction):
     app_commands.Choice(name = 'role_id', value = 2),
 ])
 async def delete(interaction: Interaction,type: app_commands.Choice[int], id_from: app_commands.Choice[int], id: str):
-    level = admin_check(interaction.user.id)
+    level = await admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
