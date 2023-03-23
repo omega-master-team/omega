@@ -30,7 +30,8 @@ redirect = f"{os.getenv('DOMAIN')}/api?code="
 async def admin_check(id):
     guild = client.get_guild(int(1084295027783639080))
     member = guild.get_member(id)
-
+    if member == None:
+        return(0)
     owner = guild.get_role(1088563072467210291)
     master = guild.get_role(1084386167501377538)
     hypervisor = guild.get_role(1088563502278512791)
