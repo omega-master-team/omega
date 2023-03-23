@@ -468,11 +468,11 @@ async def update(login, id):
             if (campus_id in campus_list_id or campus_id == 0):
                 try:
                     if (member.nick != name):
+                        if (len(name) > 32):
+                            print(f"max len for nick : {login}, on {guild.name}")
+                            name = name[:32]
                         await member.edit(nick=name)
                 except:
-                    if (len(name) > 32):
-                        print(f"max len for nick : {login}, on {guild.name}")
-                    else:
                         print(f"403 for nick : {login}, on {guild.name}")
         
         #cursus sync#        
