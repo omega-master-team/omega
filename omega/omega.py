@@ -320,7 +320,7 @@ async def sync_admin(command, message):
     title = f"{message.author} force sync"
     color = random.randint(0, 16777215)
     color = Colour(color) 
-    embed = Embed(title = f"{title}",color = color, description=f"discord : {member} \n login :{intra_id}")
+    embed = Embed(title = f"{title}",color = color, description=f"discord : {member} ({member.id}) \n login : {intra_id}")
     if (str(message.author.avatar) != "None"):
         embed.set_thumbnail(url=message.author.avatar.url)
     await channel.send(embed=embed)
@@ -352,7 +352,7 @@ async def logout_admin(command, message):
         title = f"{message.author} logout"
         color = random.randint(0, 16777215)
         color = Colour(color) 
-        embed = Embed(title = f"{title}",color = color, description=f"discord : {member}")
+        embed = Embed(title = f"{title}",color = color, description=f"discord : {member} ({member.id})")
         if (str(message.author.avatar) != "None"):
             embed.set_thumbnail(url=message.author.avatar.url)
         await channel.send(embed=embed)
