@@ -50,8 +50,11 @@ async def admin_check(id):
         return(1)
     return(0)
 
-def omega_cooldown(interaction: Interaction):
+def login_cooldown(interaction: Interaction):
     return app_commands.Cooldown(3, 3600)
+
+def logout_cooldown(interaction: Interaction):
+    return app_commands.Cooldown(1, 3600)
 
 #####################################################################################################################################################
 
@@ -79,7 +82,7 @@ async def soon(interaction: Interaction):
 #####################################################################################################################################################
 
 @tree.command(name = "login", description = "login you with your intra")
-@app_commands.checks.dynamic_cooldown(omega_cooldown)
+@app_commands.checks.dynamic_cooldown(login_cooldown)
 async def sign_up(interaction: Interaction):
     uid = uuid.uuid4()
     cursor.execute(f"DELETE FROM temp_auth WHERE discord_id={interaction.user.id}")
@@ -87,15 +90,14 @@ async def sign_up(interaction: Interaction):
     db.commit()
     await interaction.response.send_message(f"Merci de suivre la procedure ci dessous\n{redirect}{uid}", ephemeral = True)
 
-
 @sign_up.error
 async def on_test_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
     if isinstance(error, app_commands.CommandOnCooldown):
-        await interaction.response.send_message(str(error), ephemeral=True)
+        await interaction.response.send_message("You are on cooldown, please retry later", ephemeral=True)
 #####################################################################################################################################################
 
 @tree.command(name = "logout", description = "remove all your acces and your omega connection")
-@app_commands.checks.dynamic_cooldown(omega_cooldown)
+@app_commands.checks.dynamic_cooldown(logout_cooldown)
 async def logout(interaction: Interaction):
     cursor.execute(f"DELETE FROM users WHERE discord_id={interaction.user.id}")
     db.commit()
@@ -105,7 +107,7 @@ async def logout(interaction: Interaction):
 @logout.error
 async def on_test_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
     if isinstance(error, app_commands.CommandOnCooldown):
-        await interaction.response.send_message(str(error), ephemeral=True)
+        await interaction.response.send_message("You are on cooldown, please retry later", ephemeral=True)
 
 #####################################################################################################################################################
 
