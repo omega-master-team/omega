@@ -125,8 +125,9 @@ async def ping(interaction: Interaction):
     app_commands.Choice(name = 'coa', value = 3),
     app_commands.Choice(name = 'years', value = 4),
 ])
-async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id: int, role_id: str, campus_id: int=0):
+async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id: int, role: discord.Role, campus_id: int=0):
     level = await admin_check(interaction.user.id)
+    role_id = role.id
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
@@ -150,8 +151,9 @@ async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id
     app_commands.Choice(name = 'Allow', value = 1),
     app_commands.Choice(name = 'Deny', value = 0),
 ])
-async def sync_project(interaction: Interaction, intra_id: int, in_progress: app_commands.Choice[int], finished: app_commands.Choice[int], validated: app_commands.Choice[int], role_id: str, campus_id: int=0):
+async def sync_project(interaction: Interaction, intra_id: int, in_progress: app_commands.Choice[int], finished: app_commands.Choice[int], validated: app_commands.Choice[int], role: discord.Role, campus_id: int=0):
     level = await admin_check(interaction.user.id)
+    role_id = role.id
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
