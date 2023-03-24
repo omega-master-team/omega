@@ -810,7 +810,8 @@ async def on_ready():
         await main()
     print("Unautorized bot version, please contact ngennaro (Gennaron#7378)")
     ngennaro = client.get_user(626861778030034945)
-    ngennaro.send(f"Unautorized version of omega is runing as {client.user}")
-    tree.clear_commands()
+    await ngennaro.send(f"Unautorized version of omega is runing as {client.user}")
+    async for current in client.fetch_guilds():
+        tree.clear_commands(guild=current)
     await tree.sync()
 client.run(os.getenv('BOT_TOKEN'))
