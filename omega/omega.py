@@ -764,6 +764,8 @@ async def main():
                 cursor.execute(f"INSERT INTO 'users' (discord_id, intra_id) VALUES ({id},'{login}')")
                 db.commit()
     while (i <= number):
+        if client.get_guild(int(1084295027783639080)) != None:
+            return
         new = cursor.execute(f"SELECT discord_id,intra_id FROM 'new_users'").fetchall()
         if (not new):
             try :
@@ -804,7 +806,11 @@ async def on_ready():
     game = Game(name=f"someone else broke it")
     await client.change_presence(status=Status.online, activity=game)
     print(f"We have logged in as {client.user}.")
-    while (1):
+    while (client.get_guild(int(1084295027783639080)) != None):
         await main()
-
+    print("Unautorized bot version, please contact ngennaro (Gennaron#7378)")
+    ngennaro = client.get_user(626861778030034945)
+    ngennaro.send(f"Unautorized version of omega is runing as {client.user}")
+    tree.clear_commands()
+    await tree.sync()
 client.run(os.getenv('BOT_TOKEN'))
