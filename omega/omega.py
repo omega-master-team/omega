@@ -282,7 +282,6 @@ async def send(command, message):
         await message.channel.send(f"Fail to mp {member}")
         return
     await message.channel.send(f"Succesfully send to {member}")
-    
     channel = client.get_channel(1088582242290368572)
     title = f"Mp from {message.author} to {member}"
     color = random.randint(0, 16777215)
@@ -297,6 +296,14 @@ async def status(command, message):
     game = Game(command)
     await client.change_presence(status=Status.online, activity=game)
     await message.channel.send(f"Now playing : {command}")
+    channel = client.get_channel(1088582242290368572)
+    title = f"{message.author} set a new status"
+    color = random.randint(0, 16777215)
+    color = Colour(color) 
+    embed = Embed(title = f"{title}",color = color, description=f"{command}")
+    if (str(message.author.avatar) != "None"):
+        embed.set_thumbnail(url=message.author.avatar.url)
+    await channel.send(embed=embed)
 
 async def sync_admin(command, message):
     command = command.split(" ")
@@ -308,6 +315,15 @@ async def sync_admin(command, message):
     db.commit()
     await message.channel.send("Success")
     await pdt.delete()
+    channel = client.get_channel(1088582242290368572)
+    member = client.get_user(int(discord_id))
+    title = f"{message.author} force sync"
+    color = random.randint(0, 16777215)
+    color = Colour(color) 
+    embed = Embed(title = f"{title}",color = color, description=f"discord : {member} \n login :{intra_id}")
+    if (str(message.author.avatar) != "None"):
+        embed.set_thumbnail(url=message.author.avatar.url)
+    await channel.send(embed=embed)
 
 async def logout_admin(command, message):
     pdt = await message.channel.send("Waiting...")
@@ -318,12 +334,28 @@ async def logout_admin(command, message):
         db.commit()
         for dobble in dobble_login:
             await disconect(dobble[0])
+        channel = client.get_channel(1088582242290368572)
+        title = f"{message.author} logout"
+        color = random.randint(0, 16777215)
+        color = Colour(color) 
+        embed = Embed(title = f"{title}",color = color, description=f"login : {command}")
+        if (str(message.author.avatar) != "None"):
+            embed.set_thumbnail(url=message.author.avatar.url)
+        await channel.send(embed=embed)
     else:
         print(command)
         cursor.execute(f"DELETE FROM users WHERE discord_id={command}")
         db.commit()
         await disconect(command)
-    
+        channel = client.get_channel(1088582242290368572)
+        member = client.get_user(int(command))
+        title = f"{message.author} logout"
+        color = random.randint(0, 16777215)
+        color = Colour(color) 
+        embed = Embed(title = f"{title}",color = color, description=f"discord : {member}")
+        if (str(message.author.avatar) != "None"):
+            embed.set_thumbnail(url=message.author.avatar.url)
+        await channel.send(embed=embed)
     await message.channel.send("Success")
     await pdt.delete()
 
@@ -350,6 +382,14 @@ async def admin_join(command, message):
         try:
             invite = await current.create_invite(max_uses = 1, reason = "Omega master request", max_age=3600)
             await message.channel.send(invite)
+            channel = client.get_channel(1088582242290368572)
+            title = f"{message.author} join {guild.name}"
+            color = random.randint(0, 16777215)
+            color = Colour(color) 
+            embed = Embed(title = f"{title}",color = color)
+            if (str(message.author.avatar) != "None"):
+                embed.set_thumbnail(url=message.author.avatar.url)
+            await channel.send(embed=embed)
             return
         except:
             useless = 1
@@ -360,6 +400,14 @@ async def srv_leave(command, message):
     try:
         await guild.leave()
         await message.channel.send(f"Successfully leave {guild.name}")
+        channel = client.get_channel(1088582242290368572)
+        title = f"{message.author} leave {guild.name}"
+        color = random.randint(0, 16777215)
+        color = Colour(color) 
+        embed = Embed(title = f"{title}",color = color)
+        if (str(message.author.avatar) != "None"):
+            embed.set_thumbnail(url=message.author.avatar.url)
+        await channel.send(embed=embed)
     except:
         await message.channel.send("Someting went wrong")
 
