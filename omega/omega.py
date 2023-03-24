@@ -764,8 +764,6 @@ async def main():
                 cursor.execute(f"INSERT INTO 'users' (discord_id, intra_id) VALUES ({id},'{login}')")
                 db.commit()
     while (i <= number):
-        if client.get_guild(int(1084295027783639080)) != None:
-            return
         new = cursor.execute(f"SELECT discord_id,intra_id FROM 'new_users'").fetchall()
         if (not new):
             try :
