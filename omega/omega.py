@@ -167,7 +167,7 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
 
 @tree.command(name = "nick", description = "set the nick parameters on the sever (&login and &campus works)")
 @app_commands.guild_only()
-@app_commands.describe(namming_patern='the patern to aply (&login and &campus are a dynamic value)', campus_id='the campus needed')
+@app_commands.describe(namming_pattern='the patern to aply (&login and &campus are a dynamic value)', campus_id='the campus needed')
 async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
     level = await admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
