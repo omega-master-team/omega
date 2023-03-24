@@ -125,6 +125,7 @@ async def ping(interaction: Interaction):
     app_commands.Choice(name = 'coa', value = 3),
     app_commands.Choice(name = 'years', value = 4),
 ])
+@app_commands.describe(intra_id='the id of this item on intranet', role='the role to give', campus_id='the campus needed')
 async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id: int, role: discord.Role, campus_id: int=0):
     level = await admin_check(interaction.user.id)
     role_id = role.id
@@ -151,6 +152,7 @@ async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id
     app_commands.Choice(name = 'Allow', value = 1),
     app_commands.Choice(name = 'Deny', value = 0),
 ])
+@app_commands.describe(intra_id='the id of this item on intranet', role='the role to give', campus_id='the campus needed')
 async def sync_project(interaction: Interaction, intra_id: int, in_progress: app_commands.Choice[int], finished: app_commands.Choice[int], validated: app_commands.Choice[int], role: discord.Role, campus_id: int=0):
     level = await admin_check(interaction.user.id)
     role_id = role.id
@@ -165,6 +167,7 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
 
 @tree.command(name = "nick", description = "set the nick parameters on the sever (&login and &campus works)")
 @app_commands.guild_only()
+@app_commands.describe(namming_patern='the patern to aply (&login and &campus are a dynamic value)', campus_id='the campus needed')
 async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
     level = await admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
@@ -205,6 +208,7 @@ async def nick_reset(interaction: Interaction):
     app_commands.Choice(name = 'intra_id', value = 1),
     app_commands.Choice(name = 'role_id', value = 2),
 ])
+@app_commands.describe(id_from='the type of id', id='the corresponding id')
 async def delete(interaction: Interaction,type: app_commands.Choice[int], id_from: app_commands.Choice[int], id: str):
     level = await admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
