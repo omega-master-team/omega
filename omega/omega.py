@@ -753,7 +753,8 @@ async def main():
                 db.commit()
                 dobble_login = cursor.execute(f"SELECT discord_id FROM 'users' WHERE intra_id='{login}'").fetchall()
                 for dobble in dobble_login:
-                    await disconect(dobble[0])
+                    if (dobble[0] != id):
+                        await disconect(dobble[0])
                 cursor.execute(f"DELETE FROM users WHERE intra_id='{login}'")
                 cursor.execute(f"DELETE FROM new_users WHERE discord_id={id} and intra_id='{login}'")
                 db.commit()
@@ -784,7 +785,8 @@ async def main():
                 db.commit()
                 dobble_login = cursor.execute(f"SELECT discord_id FROM 'users' WHERE intra_id='{login}'").fetchall()
                 for dobble in dobble_login:
-                    await disconect(dobble[0])
+                    if (dobble[0] != id):
+                        await disconect(dobble[0])
                 cursor.execute(f"DELETE FROM users WHERE intra_id='{login}'")
                 cursor.execute(f"DELETE FROM new_users WHERE discord_id={id} and intra_id='{login}'")
                 db.commit()
