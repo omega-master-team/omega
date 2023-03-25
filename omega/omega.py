@@ -316,7 +316,7 @@ async def status(command, message):
         send = False
         i += 1
         msg = f"{msg}\n{status}"
-        if (i>25):
+        if (i>=15):
             send = True
             i = 0
             await message.channel.send(msg)
@@ -411,7 +411,7 @@ async def list(message):
         current = await client.fetch_guild(int(current.id))
         owner = await client.fetch_user(int(current.owner_id))
         msg = f"{msg}\n{current.name} | {current.id} | {owner} | {current.approximate_member_count} membres"
-        if (i>25):
+        if (i>=15):
             send = True
             i = 0
             await message.channel.send(msg)
