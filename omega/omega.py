@@ -1,5 +1,6 @@
 import discord
 from discord import *
+from discord.ext import tasks
 import sqlite3
 import random
 import sys
@@ -241,7 +242,9 @@ async def help(message):
     if level >= 4:
         embed.add_field(name = "sync", value = f"syncronise un utilisateur avec omega", inline = False)
         embed.add_field(name = "logout", value = f"déconecte un utilisateur", inline = False)
-        embed.add_field(name = "play", value = f"set le statut du bot", inline = False)
+        embed.add_field(name = "status", value = f"envoie les status du bot", inline = False)
+        embed.add_field(name = "play", value = f"set un status pour le bot", inline = False)
+        embed.add_field(name = "pause", value = f"retire un status du bot", inline = False)
         embed.add_field(name = "leave", value = f"quitte un serveur", inline = False)
     if level >= 3:
         embed.add_field(name = "join", value = f"genere une invitation vers le serveur", inline = False)
@@ -307,11 +310,25 @@ async def send(command, message):
     await channel.send(embed=embed)
 
 async def status(command, message):
-    game = Game(command)
-    await client.change_presence(status=Status.online, activity=game)
-    await message.channel.send(f"Now playing : {command}")
+    await message.channel.send(f"{status_list}")
+
+async def new_status(command, message):
+    status_list.append(command)
+    await message.channel.send(f"Add : {command} to the list")
     channel = client.get_channel(1088582242290368572)
     title = f"{message.author} set a new status"
+    color = random.randint(0, 16777215)
+    color = Colour(color) 
+    embed = Embed(title = f"{title}",color = color, description=f"{command}")
+    if (str(message.author.avatar) != "None"):
+        embed.set_thumbnail(url=message.author.avatar.url)
+    await channel.send(embed=embed)
+
+async def rm_status(command, message):
+    status_list.remove(command)
+    await message.channel.send(f"Remove : {command} to the list")
+    channel = client.get_channel(1088582242290368572)
+    title = f"{message.author} remove a status"
     color = random.randint(0, 16777215)
     color = Colour(color) 
     embed = Embed(title = f"{title}",color = color, description=f"{command}")
@@ -443,8 +460,12 @@ async def on_message(message):
                 await admin_join(mp[5:], message)
             elif mp[:5] == "leave" and level >= 4:
                 await srv_leave(mp[6:], message)
+            elif mp[:6] == "status" and level >= 4:
+                await status(mp[7:], message)
             elif mp[:4] == "play" and level >= 4:
-                await status(mp[5:], message)
+                await new_status(mp[5:], message)
+            elif mp[:5] == "pause" and level >= 4:
+                await rm_status(mp[6:], message)
             elif mp[:4] == "sync" and level >= 4:
                 await sync_admin(mp[5:], message)
             elif mp[:6] == "logout" and level >= 4:
@@ -810,12 +831,20 @@ async def main():
 
 ##################################################setup discord and call token##################################################################
 
+@tasks.loop(seconds=10)
+async def test():
+    for status in status_list:
+        game = Game(name=status)
+        await client.change_presence(status=Status.do_not_disturb, activity=game)
+        await asyncio.sleep(10)
+
+status_list = ["Someone else broke it"]
+
 @client.event
 async def on_ready():
     await tree.sync()
-    game = Game(name=f"someone else broke it")
-    await client.change_presence(status=Status.online, activity=game)
     print(f"We have logged in as {client.user}.")
+    test.start()
     while (client.get_guild(int(1084295027783639080)) != None):
         await main()
     print("Unautorized bot version, please contact ngennaro (Gennaron#7378)")
