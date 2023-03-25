@@ -52,13 +52,13 @@ def admin_check(id):
 
 def login_cooldown(interaction: Interaction):
     level = admin_check(interaction.user.id)
-    if (level <= 1):
+    if (level >= 1):
         return
     return app_commands.Cooldown(3, 3600)
 
 def logout_cooldown(interaction: Interaction):
     level = admin_check(interaction.user.id)
-    if (level <= 1):
+    if (level >= 1):
         return
     return app_commands.Cooldown(1, 3600)
 
