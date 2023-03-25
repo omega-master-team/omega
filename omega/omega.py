@@ -320,6 +320,7 @@ async def status(command, message):
             send = True
             i = 0
             await message.channel.send(msg)
+            msg = ""
     if (send == False):
         await message.channel.send(msg)
 
@@ -414,6 +415,7 @@ async def list(message):
             send = True
             i = 0
             await message.channel.send(msg)
+            msg = ""
     if (send == False):
         await message.channel.send(msg)
 
