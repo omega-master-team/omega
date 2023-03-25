@@ -323,8 +323,6 @@ async def status(command, message):
     if (send == False):
         await message.channel.send(msg)
 
-    await message.channel.send(f"{status_list}")
-
 async def new_status(command, message):
     status_list.append(command)
     await message.channel.send(f"Add : {command}")
