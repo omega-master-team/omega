@@ -310,6 +310,19 @@ async def send(command, message):
     await channel.send(embed=embed)
 
 async def status(command, message):
+    i = 0
+    msg = ""
+    send = False
+    async for status in status_list:
+        i += 1
+        msg = f"{msg}\n{status}"
+        if (i>25):
+            send = True
+            i = 0
+            await message.channel.send(msg)
+    if (send == False):
+        await message.channel.send(msg)
+
     await message.channel.send(f"{status_list}")
 
 async def new_status(command, message):
