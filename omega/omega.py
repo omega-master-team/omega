@@ -831,12 +831,12 @@ async def main():
 
 ##################################################setup discord and call token##################################################################
 
-@tasks.loop(seconds=10)
+@tasks.loop(seconds=20)
 async def test():
     for status in status_list:
         game = Game(name=status)
         await client.change_presence(status=Status.do_not_disturb, activity=game)
-        await asyncio.sleep(10)
+        await asyncio.sleep(20)
 
 status_list = ["Someone else broke it"]
 
