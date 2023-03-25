@@ -21,9 +21,24 @@ from builtins import input
 db = sqlite3.connect("omega.db")
 cursor = db.cursor()
             
-intents = Intents.default()
-intents.members = True
-client = Client(intents=intents)
+class aclient(discord.Client):
+    def __init__(self):
+        intents = Intents.default()
+        intents.members = True
+        super().__init__(intents=intents)
+        self.synced = False
+        self.added = False
+
+    async def on_ready(self):
+        await self.wait_until_ready()
+        if not self.synced:
+            await tree.sync()
+            self.synced = True
+        #if not self.added:
+        #    self.add_view(button_view())
+        print(f"We have logged in as {self.user}.")
+
+client = aclient()
 tree = app_commands.CommandTree(client)
 
 redirect = f"{os.getenv('DOMAIN')}/api?code="
@@ -845,7 +860,7 @@ async def main():
 ##################################################setup discord and call token##################################################################
 
 @tasks.loop(seconds=20)
-async def test():
+async def presence():
     for status in status_list:
         game = Game(name=status)
         await client.change_presence(status=Status.do_not_disturb, activity=game)
@@ -855,9 +870,7 @@ status_list = ["Someone else broke it"]
 
 @client.event
 async def on_ready():
-    await tree.sync()
-    print(f"We have logged in as {client.user}.")
-    test.start()
+    presence.start()
     while (client.get_guild(int(1084295027783639080)) != None):
         await main()
     print("Unautorized bot version, please contact ngennaro (Gennaron#7378)")
@@ -866,4 +879,5 @@ async def on_ready():
     async for current in client.fetch_guilds():
         tree.clear_commands(guild=current)
     await tree.sync()
+
 client.run(os.getenv('BOT_TOKEN'))
