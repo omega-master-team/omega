@@ -314,7 +314,7 @@ async def status(command, message):
 
 async def new_status(command, message):
     status_list.append(command)
-    await message.channel.send(f"Add : {command} to the list")
+    await message.channel.send(f"Add : {command}")
     channel = client.get_channel(1088582242290368572)
     title = f"{message.author} set a new status"
     color = random.randint(0, 16777215)
@@ -326,7 +326,7 @@ async def new_status(command, message):
 
 async def rm_status(command, message):
     status_list.remove(command)
-    await message.channel.send(f"Remove : {command} to the list")
+    await message.channel.send(f"Remove : {command}")
     channel = client.get_channel(1088582242290368572)
     title = f"{message.author} remove a status"
     color = random.randint(0, 16777215)
