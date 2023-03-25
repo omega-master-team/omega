@@ -313,7 +313,7 @@ async def status(command, message):
     i = 0
     msg = ""
     send = False
-    async for status in status_list:
+    for status in status_list:
         i += 1
         msg = f"{msg}\n{status}"
         if (i>25):
