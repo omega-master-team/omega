@@ -312,8 +312,8 @@ async def send(command, message):
 async def status(command, message):
     i = 0
     msg = ""
-    send = False
     for status in status_list:
+        send = False
         i += 1
         msg = f"{msg}\n{status}"
         if (i>25):
@@ -405,8 +405,8 @@ async def logout_admin(command, message):
 async def list(message):
     i = 0
     msg = ""
-    send = False
     async for current in client.fetch_guilds():
+        send = False
         i += 1
         current = await client.fetch_guild(int(current.id))
         owner = await client.fetch_user(int(current.owner_id))
