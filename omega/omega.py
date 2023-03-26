@@ -279,19 +279,6 @@ async def launch_button(interaction: discord.Interaction,label:str,style: app_co
     await interaction.response.send_message("Success", ephemeral=True, delete_after=1)
     await interaction.channel.send(content=message, view = view)
 
-
-#####################################################################################################################################################
-
-@client.event
-async def on_raw_reaction_add(event):
-    if (event.emoji.name == '❌'):
-        channel = client.get_channel(event.channel_id)
-        message = await channel.fetch_message(event.message_id)
-        if (message.author == client):
-                level = admin_check(event.user_id)
-                if level >= 3:
-                    await message.delete()
-
 #####################################################################################################################################################
 
 async def help(message):
