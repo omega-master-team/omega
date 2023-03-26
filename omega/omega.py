@@ -20,22 +20,10 @@ from builtins import input
 
 db = sqlite3.connect("omega.db")
 cursor = db.cursor()
-            
-class aclient(discord.Client):
-    def __init__(self):
-        intents = Intents.default()
-        intents.members = True
-        super().__init__(intents=intents)
-        self.synced = False
-
-    async def on_ready(self):
-        await self.wait_until_ready()
-        if not self.synced:
-            await tree.sync()
-            self.synced = True
-        print(f"We have logged in as {self.user}.")
-
-client = aclient()
+       
+intents = Intents.default()
+intents.members = True
+client = Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 redirect = f"{os.getenv('DOMAIN')}/api?code="
@@ -913,6 +901,7 @@ status_list = ["Someone else broke it"]
 
 @client.event
 async def on_ready():
+    await tree.sync()
     presence.start()
     while (client.get_guild(int(1084295027783639080)) != None):
         await main()
