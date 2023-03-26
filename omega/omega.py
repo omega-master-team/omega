@@ -252,9 +252,10 @@ async def on_interaction(interaction=Interaction):
 @tree.command(name='reaction_role', description='create a reaction role button')
 @app_commands.guild_only()
 @app_commands.choices(style=[
-    app_commands.Choice(name = 'blurple', value = 1),
+    app_commands.Choice(name = 'blue', value = 1),
     app_commands.Choice(name = 'green', value = 2),
     app_commands.Choice(name = 'red', value =3),
+    app_commands.Choice(name = 'grey', value =4),
 ])
 async def launch_button(interaction: discord.Interaction,label:str,style: app_commands.Choice[int],role:discord.Role, message: str=""):
     level = admin_check(interaction.user.id)
@@ -270,7 +271,8 @@ async def launch_button(interaction: discord.Interaction,label:str,style: app_co
         style = ButtonStyle.green
     elif style.value==3:
         style = ButtonStyle.red
-
+    elif style.value==4:
+        style = ButtonStyle.grey
     view = discord.ui.View(timeout=None)
     button = discord.ui.Button(label=label, custom_id=str(role.id), style=style)
     view.add_item(button)
