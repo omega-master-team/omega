@@ -242,10 +242,10 @@ async def on_interaction(interaction=Interaction):
             try:
                 if role in interaction.user.roles:
                     await interaction.user.remove_roles(role)
-                    await interaction.response.send_message(f"- {role.name}", ephemeral=True, delete_after=1)
+                    await interaction.response.send_message(f"Remove {role.name}", ephemeral=True, delete_after=1)
                 else:
                     await interaction.user.add_roles(role)
-                    await interaction.response.send_message(f"+ {role.name}", ephemeral=True, delete_after=1)
+                    await interaction.response.send_message(f"Add {role.name}", ephemeral=True, delete_after=1)
             except:
                 await interaction.response.send_message(f"someting went wrong", ephemeral=True, delete_after=3)
 
