@@ -13,11 +13,8 @@ RUN \
 WORKDIR /app
 RUN mkdir -p /app/cert
 
-# Copy sources
-COPY . oauth/
+COPY entrypoint.sh /app/entrypoint.sh
 
-# Build sources
-RUN cd oauth && ~/.cargo/bin/cargo build --release
+VOLUME /app/oauth
 
-# Runtime
-CMD env DB_FILE=/app/omega.db /app/oauth/target/release/oauth
+ENTRYPOINT bash entrypoint.sh
