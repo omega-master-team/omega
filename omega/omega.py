@@ -289,7 +289,7 @@ async def on_raw_reaction_add(event):
         message = await channel.fetch_message(event.message_id)
         if (message.author == client):
                 level = admin_check(event.user_id)
-                if level <= 3:
+                if level >= 3:
                     await message.delete()
 
 #####################################################################################################################################################
