@@ -257,6 +257,7 @@ async def on_interaction(interaction=Interaction):
     app_commands.Choice(name = 'red', value =3),
     app_commands.Choice(name = 'grey', value =4),
 ])
+@app_commands.describe(label='the button content', style='the button color', role='the role to give', message='An header message')
 async def launch_button(interaction: discord.Interaction,label:str,style: app_commands.Choice[int],role:discord.Role, message: str=""):
     level = admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
