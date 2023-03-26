@@ -265,6 +265,7 @@ async def on_interaction(interaction=Interaction):
                 await interaction.response.send_message(f"someting went wrong", ephemeral=True, delete_after=3)
 
 @tree.command(name='reaction_role', description='create a reaction role button')
+@app_commands.guild_only()
 @app_commands.choices(style=[
     app_commands.Choice(name = 'blurple', value = 1),
     app_commands.Choice(name = 'green', value = 2),
