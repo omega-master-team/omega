@@ -27,15 +27,12 @@ class aclient(discord.Client):
         intents.members = True
         super().__init__(intents=intents)
         self.synced = False
-        self.added = False
 
     async def on_ready(self):
         await self.wait_until_ready()
         if not self.synced:
             await tree.sync()
             self.synced = True
-        #if not self.added:
-        #    self.add_view(button_view())
         print(f"We have logged in as {self.user}.")
 
 client = aclient()
