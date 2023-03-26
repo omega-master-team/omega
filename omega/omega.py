@@ -114,13 +114,13 @@ async def logout(interaction: Interaction):
 @logout.error
 async def on_test_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
     if isinstance(error, app_commands.CommandOnCooldown):
-        await interaction.response.send_message("You are on cooldown, please retry later", ephemeral=True, delete_after=2)
+        await interaction.response.send_message("You are on cooldown, please retry later", ephemeral=True, delete_after=3)
 
 #####################################################################################################################################################
 
 @tree.command(name = "ping", description = "send the bot ping")
 async def ping(interaction: Interaction):
-    await interaction.response.send_message(f"{round((client.latency*1000),1)}ms", ephemeral = True, delete_after=2)
+    await interaction.response.send_message(f"{round((client.latency*1000),1)}ms", ephemeral = True, delete_after=5)
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
