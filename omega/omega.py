@@ -110,12 +110,12 @@ async def sign_up(interaction: Interaction):
     cursor.execute(f"DELETE FROM temp_auth WHERE discord_id={interaction.user.id}")
     cursor.execute(f"INSERT INTO temp_auth (discord_id, code) VALUES ({interaction.user.id},'{uid}')")
     db.commit()
-    await interaction.response.send_message(f"Merci de suivre la procedure ci dessous\n{redirect}{uid}", ephemeral = True)
+    await interaction.response.send_message(f"Merci de suivre la procedure ci dessous\n{redirect}{uid}", ephemeral = True, delete_after=30)
 
 @sign_up.error
 async def on_test_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
     if isinstance(error, app_commands.CommandOnCooldown):
-        await interaction.response.send_message("You are on cooldown, please retry later", ephemeral=True)
+        await interaction.response.send_message("You are on cooldown, please retry later", ephemeral=True, delete_after=2)
 #####################################################################################################################################################
 
 @tree.command(name = "logout", description = "remove all your acces and your omega connection")
@@ -123,19 +123,19 @@ async def on_test_error(interaction: discord.Interaction, error: app_commands.Ap
 async def logout(interaction: Interaction):
     cursor.execute(f"DELETE FROM users WHERE discord_id={interaction.user.id}")
     db.commit()
-    await interaction.response.send_message(f"You are now logout", ephemeral = True)
+    await interaction.response.send_message(f"You are now logout", ephemeral = True, delete_after=2)
     await disconect(interaction.user.id)
 
 @logout.error
 async def on_test_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
     if isinstance(error, app_commands.CommandOnCooldown):
-        await interaction.response.send_message("You are on cooldown, please retry later", ephemeral=True)
+        await interaction.response.send_message("You are on cooldown, please retry later", ephemeral=True, delete_after=2)
 
 #####################################################################################################################################################
 
 @tree.command(name = "ping", description = "send the bot ping")
 async def ping(interaction: Interaction):
-    await interaction.response.send_message(f"{round((client.latency*1000),1)}ms", ephemeral = True)
+    await interaction.response.send_message(f"{round((client.latency*1000),1)}ms", ephemeral = True, delete_after=2)
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
@@ -152,11 +152,11 @@ async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id
     level = admin_check(interaction.user.id)
     role_id = role.id
     if (not interaction.user.guild_permissions.administrator and level <= 2):
-        await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
+        await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
     cursor.execute(f"INSERT INTO {type.name} (campus_id,intra_id, guild_id, discord_id) VALUES ({campus_id},{intra_id},{interaction.guild_id},{int(role_id)})")
     db.commit()
-    await interaction.response.send_message(f"configuration successfully update", ephemeral = True)
+    await interaction.response.send_message(f"configuration successfully update", ephemeral = True, delete_after=2)
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
@@ -179,12 +179,12 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
     level = admin_check(interaction.user.id)
     role_id = role.id
     if (not interaction.user.guild_permissions.administrator and level <= 2):
-        await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
+        await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
     
     cursor.execute(f"INSERT INTO project (campus_id,intra_id,in_progress,finished,validated,guild_id,discord_id) VALUES ({campus_id},{intra_id},{in_progress.value},{finished.value},{validated.value},{interaction.guild_id},{int(role_id)})")
     db.commit()
-    await interaction.response.send_message(f"configuration successfully update", ephemeral = True)
+    await interaction.response.send_message(f"configuration successfully update", ephemeral = True, delete_after=2)
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
 @tree.command(name = "nick", description = "set the nick parameters on the sever (&login and &campus works)")
@@ -193,14 +193,14 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
 async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
     level = admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
-        await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
+        await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
     cursor.execute(f"INSERT INTO nick (campus_id,format,guild_id) VALUES ({campus_id},'{namming_pattern}',{interaction.guild.id})")
     db.commit()
     if (len(namming_pattern) > 20):
-        await interaction.response.send_message(f"configuration successfully update\nWarning, the max len for a nickname is 32 so you can have problem", ephemeral = True)
+        await interaction.response.send_message(f"configuration successfully update\nWarning, the max len for a nickname is 32 so you can have problem", ephemeral = True, delete_after=3)
     else:
-        await interaction.response.send_message(f"configuration successfully update", ephemeral = True)
+        await interaction.response.send_message(f"configuration successfully update", ephemeral = True, delete_after=2)
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
@@ -209,11 +209,11 @@ async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
 async def nick_reset(interaction: Interaction):
     level = admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
-        await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
+        await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
     cursor.execute(f"DELETE FROM nick WHERE guild_id={interaction.guild.id}")
     db.commit()
-    await interaction.response.send_message(f"configuration successfully update", ephemeral = True)
+    await interaction.response.send_message(f"configuration successfully update", ephemeral = True, delete_after=2)
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
@@ -242,6 +242,51 @@ async def delete(interaction: Interaction,type: app_commands.Choice[int], id_fro
         cursor.execute(f"DELETE FROM {type.name} WHERE intra_id={int(id)} and guild_id={interaction.guild.id}")
     db.commit()
     await interaction.response.send_message(f"configuration successfully update", ephemeral = True)
+
+#####################################################################################################################################################
+
+@client.event
+async def on_interaction(interaction=Interaction):
+    if str(interaction.type) == "InteractionType.component":
+        data = interaction.data
+        type = data['component_type']
+        custom_id = data['custom_id']
+        if type == 2:
+            guild = client.get_guild(interaction.guild_id)
+            role = guild.get_role(int(custom_id))
+            try:
+                if role in interaction.user.roles:
+                    await interaction.user.remove_roles(role)
+                    await interaction.response.send_message(f"- {role.name}", ephemeral=True, delete_after=1)
+                else:
+                    await interaction.user.add_roles(role)
+                    await interaction.response.send_message(f"+ {role.name}", ephemeral=True, delete_after=1)
+            except:
+                await interaction.response.send_message(f"someting went wrong", ephemeral=True, delete_after=3)
+
+@tree.command(name='reaction_role', description='create a reaction role button')
+@app_commands.choices(style=[
+    app_commands.Choice(name = 'blurple', value = 1),
+    app_commands.Choice(name = 'green', value = 2),
+    app_commands.Choice(name = 'red', value =3),
+])
+async def launch_button(interaction: discord.Interaction,label:str,style: app_commands.Choice[int],role:discord.Role, message: str=""):
+    level = admin_check(interaction.user.id)
+    if (not interaction.user.guild_permissions.administrator and level <= 2):
+        await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
+        return
+    if style.value==1:
+        style = ButtonStyle.blurple
+    elif style.value==2:
+        style = ButtonStyle.green
+    elif style.value==3:
+        style = ButtonStyle.red
+
+    view = discord.ui.View(timeout=None)
+    button = discord.ui.Button(label=label, custom_id=str(role.id), style=style)
+    view.add_item(button)
+    await interaction.response.send_message("Success", ephemeral=True, delete_after=1)
+    await interaction.channel.send(content=message, view = view)
 
 #####################################################################################################################################################
 
