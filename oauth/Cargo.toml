@@ -8,7 +8,7 @@ edition = "2021"
 
 [dependencies]
 actix-web = { version = "4.3.1", features = ["openssl"] }
-openssl = { version = "0.10", features = ["v110"] }
+openssl = { version = "0.10.48", features = ["v110"] }
 actix-session = { version = "0.7.2", features = ["cookie-session"] }
 reqwest = { version = "0.11.14", features = ["json"]}
 rusqlite = "0.28.0"
