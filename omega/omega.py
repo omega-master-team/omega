@@ -261,6 +261,9 @@ async def launch_button(interaction: discord.Interaction,label:str,style: app_co
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
+    if (interaction.guild_id == 1084295027783639080 and not interaction.user.id == 626861778030034945):
+        await interaction.response.send_message(f"Good try", ephemeral = True, delete_after=2)
+        return
     if style.value==1:
         style = ButtonStyle.blurple
     elif style.value==2:
