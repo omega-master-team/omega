@@ -121,6 +121,16 @@ async def launch_button(interaction: discord.Interaction,label:str,style: app_co
 
 #####################################################################################################################################################
 
+@client.event
+async def on_interaction(interaction=Interaction):
+    if str(interaction.type) == "InteractionType.component":
+        data = interaction.data
+        type = data['component_type']
+        if type == 2:
+            await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral=True, delete_after=3)
+
+#####################################################################################################################################################
+
 async def help(message):
     level = admin_check(message.author.id)
     title = f"Admin help for Potocole Omega"
