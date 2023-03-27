@@ -564,7 +564,7 @@ async def adm_maintenance(command, message):
     sub = command[0]
     module_list = cursor.execute(f"SELECT part,status FROM 'maintenance'").fetchall()
     if sub == "list":
-        title = f"Admin help for Potocole Omega"
+        title = f"Maintenance module status"
         color = random.randint(0, 16777215)
         color = Colour(color) 
         embed = Embed(title = f"{title}",color = color)
