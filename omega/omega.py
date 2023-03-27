@@ -867,9 +867,7 @@ async def main():
             try :
                 login = cursor.execute(f"SELECT intra_id FROM 'users' WHERE omega_id='{i}'").fetchone()[0]
                 id = int(cursor.execute(f"SELECT discord_id FROM 'users' WHERE omega_id='{i}'").fetchone()[0])
-                print(f"____________________\n{login}")
                 await update(login, id)
-                print("update done")
                 await asyncio.sleep(0.5)
 
             except :
@@ -880,7 +878,6 @@ async def main():
                 id = current[0]
                 login = current[1]
 
-                print(f"____________________\nWe have now add : {id} {login}")
                 cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
                 db.commit()
                 dobble_login = cursor.execute(f"SELECT discord_id FROM 'users' WHERE intra_id='{login}'").fetchall()
