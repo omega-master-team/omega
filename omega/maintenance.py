@@ -51,73 +51,73 @@ def admin_check(id):
         return(1)
     return(0)
 
-@tree.command(name = "help", description = "⛔ Bot curently in maintenance ⛔")
+@tree.command(name = "help", description = "🚧 Bot curently in maintenance 🚧")
 async def soon(interaction: Interaction):
-    await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral = True, delete_after=5)
+    await interaction.response.send_message(f"🚧 Bot curently in maintenance 🚧", ephemeral = True, delete_after=5)
 
 #####################################################################################################################################################
 
-@tree.command(name = "login", description = "⛔ Bot curently in maintenance ⛔")
+@tree.command(name = "login", description = "🚧 Bot curently in maintenance 🚧")
 async def sign_up(interaction: Interaction):
-    await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral = True, delete_after=5)
+    await interaction.response.send_message(f"🚧 Bot curently in maintenance 🚧", ephemeral = True, delete_after=5)
     
 #####################################################################################################################################################
 
-@tree.command(name = "logout", description = "⛔ Bot curently in maintenance ⛔")
+@tree.command(name = "logout", description = "🚧 Bot curently in maintenance 🚧")
 async def logout(interaction: Interaction):
-    await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral = True, delete_after=5)
+    await interaction.response.send_message(f"🚧 Bot curently in maintenance 🚧", ephemeral = True, delete_after=5)
 
 #####################################################################################################################################################
 
-@tree.command(name = "ping", description = "⛔ Bot curently in maintenance ⛔")
+@tree.command(name = "ping", description = "🚧 Bot curently in maintenance 🚧")
 async def ping(interaction: Interaction):
-    await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral = True, delete_after=5)
+    await interaction.response.send_message(f"🚧 Bot curently in maintenance 🚧", ephemeral = True, delete_after=5)
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
-@tree.command(name = "sync", description = "⛔ Bot curently in maintenance ⛔")
+@tree.command(name = "sync", description = "🚧 Bot curently in maintenance 🚧")
 @app_commands.guild_only()
 async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id: int, role: discord.Role, campus_id: int=0):
-    await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral = True, delete_after=5)
+    await interaction.response.send_message(f"🚧 Bot curently in maintenance 🚧", ephemeral = True, delete_after=5)
     
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
-@tree.command(name = "sync_project", description = "⛔ Bot curently in maintenance ⛔")
+@tree.command(name = "sync_project", description = "🚧 Bot curently in maintenance 🚧")
 @app_commands.guild_only()
 async def sync_project(interaction: Interaction, intra_id: int, in_progress: app_commands.Choice[int], finished: app_commands.Choice[int], validated: app_commands.Choice[int], role: discord.Role, campus_id: int=0):
-    await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral = True, delete_after=5)
+    await interaction.response.send_message(f"🚧 Bot curently in maintenance 🚧", ephemeral = True, delete_after=5)
     
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
-@tree.command(name = "nick", description = "⛔ Bot curently in maintenance ⛔")
+@tree.command(name = "nick", description = "🚧 Bot curently in maintenance 🚧")
 @app_commands.guild_only()
 async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
-    await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral = True, delete_after=5)
+    await interaction.response.send_message(f"🚧 Bot curently in maintenance 🚧", ephemeral = True, delete_after=5)
 
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
-@tree.command(name = "nick_reset", description = "⛔ Bot curently in maintenance ⛔")
+@tree.command(name = "nick_reset", description = "🚧 Bot curently in maintenance 🚧")
 @app_commands.guild_only()
 async def nick_reset(interaction: Interaction):
-    await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral = True, delete_after=5)
+    await interaction.response.send_message(f"🚧 Bot curently in maintenance 🚧", ephemeral = True, delete_after=5)
 
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
-@tree.command(name = "delete", description = "⛔ Bot curently in maintenance ⛔")
+@tree.command(name = "delete", description = "🚧 Bot curently in maintenance 🚧")
 @app_commands.guild_only()
 async def delete(interaction: Interaction,type: app_commands.Choice[int], id_from: app_commands.Choice[int], id: str):
-    await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral = True, delete_after=5)
+    await interaction.response.send_message(f"🚧 Bot curently in maintenance 🚧", ephemeral = True, delete_after=5)
 
 
 #####################################################################################################################################################
 
-@tree.command(name='reaction_role', description='⛔ Bot curently in maintenance ⛔')
+@tree.command(name='reaction_role', description='🚧 Bot curently in maintenance 🚧')
 @app_commands.guild_only()
 async def launch_button(interaction: discord.Interaction,label:str,style: app_commands.Choice[int],role:discord.Role, message: str=""):
-    await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral = True, delete_after=5)
+    await interaction.response.send_message(f"🚧 Bot curently in maintenance 🚧", ephemeral = True, delete_after=5)
 
 #####################################################################################################################################################
 
@@ -127,7 +127,7 @@ async def on_interaction(interaction=Interaction):
         data = interaction.data
         type = data['component_type']
         if type == 2:
-            await interaction.response.send_message(f"⛔ Bot curently in maintenance ⛔", ephemeral=True, delete_after=3)
+            await interaction.response.send_message(f"🚧 Bot curently in maintenance 🚧", ephemeral=True, delete_after=3)
 
 #####################################################################################################################################################
 
@@ -355,11 +355,11 @@ async def presence():
         await client.change_presence(status=Status.do_not_disturb, activity=game)
         await asyncio.sleep(20)
 
-status_list = ["⛔ Maintenance mode ⛔"]
+status_list = ["🚧 Maintenance 🚧"]
 
 @client.event
 async def on_ready():
     await tree.sync()
     presence.start()
 
-client.run(os.getenv('BOT_TOKEN'))
+client.run("MTA0MjgwMjE0ODM4OTQ0MTYzNw.GOiKQC.njVntL6pbOaXtSHoDzNP1qko3nwOGRQk4AX-ek") #(os.getenv('BOT_TOKEN'))
