@@ -66,7 +66,11 @@ def logout_cooldown(interaction: Interaction):
 #####################################################################################################################################################
 
 @tree.command(name = "help", description = "Send the bot command list")
-async def soon(interaction: Interaction):
+async def help(interaction: Interaction):
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='base'").fetchone()[0]
+    if maintenance == "on":
+        await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+        return
     title = f"Help for Potocole Omega"
     color = random.randint(0, 16777215)
     color = Colour(color) 
@@ -91,6 +95,10 @@ async def soon(interaction: Interaction):
 @tree.command(name = "login", description = "login you with your intra")
 @app_commands.checks.dynamic_cooldown(login_cooldown)
 async def sign_up(interaction: Interaction):
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='login'").fetchone()[0]
+    if maintenance == "on":
+        await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+        return
     uid = uuid.uuid4()
     cursor.execute(f"DELETE FROM temp_auth WHERE discord_id={interaction.user.id}")
     cursor.execute(f"INSERT INTO temp_auth (discord_id, code) VALUES ({interaction.user.id},'{uid}')")
@@ -106,6 +114,10 @@ async def on_test_error(interaction: discord.Interaction, error: app_commands.Ap
 @tree.command(name = "logout", description = "remove all your acces and your omega connection")
 @app_commands.checks.dynamic_cooldown(logout_cooldown)
 async def logout(interaction: Interaction):
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='login'").fetchone()[0]
+    if maintenance == "on":
+        await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+        return
     cursor.execute(f"DELETE FROM users WHERE discord_id={interaction.user.id}")
     db.commit()
     await interaction.response.send_message(f"You are now logout", ephemeral = True, delete_after=2)
@@ -120,6 +132,10 @@ async def on_test_error(interaction: discord.Interaction, error: app_commands.Ap
 
 @tree.command(name = "ping", description = "send the bot ping")
 async def ping(interaction: Interaction):
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='base'").fetchone()[0]
+    if maintenance == "on":
+        await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+        return
     await interaction.response.send_message(f"{round((client.latency*1000),1)}ms", ephemeral = True, delete_after=5)
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
@@ -134,6 +150,10 @@ async def ping(interaction: Interaction):
 ])
 @app_commands.describe(intra_id='the id of this item on intranet', role='the role to give', campus_id='the campus needed')
 async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id: int, role: discord.Role, campus_id: int=0):
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
+    if maintenance == "on":
+        await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+        return
     level = admin_check(interaction.user.id)
     role_id = role.id
     if (not interaction.user.guild_permissions.administrator and level <= 2):
@@ -161,6 +181,10 @@ async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id
 ])
 @app_commands.describe(intra_id='the id of this item on intranet', role='the role to give', campus_id='the campus needed')
 async def sync_project(interaction: Interaction, intra_id: int, in_progress: app_commands.Choice[int], finished: app_commands.Choice[int], validated: app_commands.Choice[int], role: discord.Role, campus_id: int=0):
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
+    if maintenance == "on":
+        await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+        return
     level = admin_check(interaction.user.id)
     role_id = role.id
     if (not interaction.user.guild_permissions.administrator and level <= 2):
@@ -176,6 +200,10 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
 @app_commands.guild_only()
 @app_commands.describe(namming_pattern='the patern to aply (&login and &campus are a dynamic value)', campus_id='the campus needed')
 async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
+    if maintenance == "on":
+        await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+        return
     level = admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
@@ -192,6 +220,10 @@ async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
 @tree.command(name = "nick_reset", description = "reset the nick parameters on the sever")
 @app_commands.guild_only()
 async def nick_reset(interaction: Interaction):
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
+    if maintenance == "on":
+        await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+        return
     level = admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
@@ -217,6 +249,10 @@ async def nick_reset(interaction: Interaction):
 ])
 @app_commands.describe(id_from='the type of id', id='the corresponding id')
 async def delete(interaction: Interaction,type: app_commands.Choice[int], id_from: app_commands.Choice[int], id: str):
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
+    if maintenance == "on":
+        await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+        return
     level = admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
@@ -237,6 +273,10 @@ async def on_interaction(interaction=Interaction):
         type = data['component_type']
         custom_id = data['custom_id']
         if type == 2:
+            maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='reaction_role'").fetchone()[0]
+            if maintenance == "on":
+                await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+                return
             guild = client.get_guild(interaction.guild_id)
             role = guild.get_role(int(custom_id))
             try:
@@ -259,6 +299,10 @@ async def on_interaction(interaction=Interaction):
 ])
 @app_commands.describe(label='the button content', style='the button color', role='the role to give', message='An header message')
 async def launch_button(interaction: discord.Interaction,label:str,style: app_commands.Choice[int],role:discord.Role, message: str=""):
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='reaction_role'").fetchone()[0]
+    if maintenance == "on":
+        await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+        return
     level = admin_check(interaction.user.id)
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
@@ -288,9 +332,8 @@ async def help(message):
     color = random.randint(0, 16777215)
     color = Colour(color) 
     embed = Embed(title = f"{title}",color = color)
-    embed.add_field(name = "___________", value = f"utilities", inline = False)
     if level >= 5:
-        embed.add_field(name = "__ROOT__", value = f"your are the master", inline = False)
+        embed.add_field(name = "__lock__", value = f"manage maintenance mod", inline = False)
     if level >= 4:
         embed.add_field(name = "sync", value = f"syncronise un utilisateur avec omega", inline = False)
         embed.add_field(name = "logout", value = f"déconecte un utilisateur", inline = False)
@@ -507,6 +550,50 @@ async def srv_leave(command, message):
     except:
         await message.channel.send("Someting went wrong")
 
+async def adm_maintenance(command, message):
+    command = command.split(" ")
+    sub = command[0]
+    module_list = cursor.execute(f"SELECT part,status FROM 'maintenance'").fetchall()
+    if sub == "list":
+        title = f"Admin help for Potocole Omega"
+        color = random.randint(0, 16777215)
+        color = Colour(color) 
+        embed = Embed(title = f"{title}",color = color)
+        for module in module_list:
+            embed.add_field(name = f"__{module[0]}__", value = module[1], inline = True)
+        await message.channel.send(embed=embed)
+        return
+    if sub == "all":
+        for module in module_list:
+            try :
+                mode = command[1]
+                if mode != "on" and mode != "off":
+                    await message.channel.send("mode invalid...")
+                    return
+            except:
+                await message.channel.send("mode missing...")
+                return
+            cursor.execute(f"UPDATE 'maintenance' SET status='{command[1]}' WHERE part='{module[0]}'")
+            db.commit()
+        await message.channel.send("Success...")
+        return
+    for module in module_list:
+        if sub == module[0]:
+            try :
+                mode = command[1]
+                if mode != "on" and mode != "off":
+                    await message.channel.send("mode invalid...")
+                    return
+            except:
+                await message.channel.send("mode missing...")
+                return
+            cursor.execute(f"UPDATE 'maintenance' SET status='{command[1]}' WHERE part='{module[0]}'")
+            db.commit()
+            await message.channel.send("Success...")
+            return
+    await message.channel.send("invalid module")
+
+
 @client.event
 async def on_message(message):
     if (message.author == client.user):
@@ -514,30 +601,72 @@ async def on_message(message):
     if (str(message.channel.type) == "private"):
         level = admin_check(message.author.id)
         if (level >= 1):
+            utils = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='admin_utils'").fetchone()[0]
+            sync = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='admin_sync'").fetchone()[0]
+            mstatus = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='status'").fetchone()[0]
             mp = message.content
             if mp[:5] == "stats" and level >= 1:
+                if utils == "on":
+                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                    return
                 await stats(message)
             elif mp[:4] == "send" and level >= 2:
+                if utils == "on":
+                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                    return
                 await send(mp[5:], message)
             elif mp[:4] == "list" and level >= 3:
+                if utils == "on":
+                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                    return
                 await list(message)
             elif mp[:4] == "join" and level >= 3:
+                if utils == "on":
+                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                    return
                 await admin_join(mp[5:], message)
             elif mp[:5] == "leave" and level >= 4:
+                if utils == "on":
+                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                    return
                 await srv_leave(mp[6:], message)
             elif mp[:6] == "status" and level >= 4:
+                if mstatus == "on":
+                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                    return
                 await status(mp[7:], message)
             elif mp[:4] == "play" and level >= 4:
+                if mstatus == "on":
+                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                    return
                 await new_status(mp[5:], message)
             elif mp[:5] == "pause" and level >= 4:
+                if mstatus == "on":
+                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                    return
                 await rm_status(mp[6:], message)
             elif mp[:4] == "sync" and level >= 4:
+                if sync == "on":
+                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                    return
                 await sync_admin(mp[5:], message)
             elif mp[:6] == "logout" and level >= 4:
+                if sync == "on":
+                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                    return
                 await logout_admin(mp[7:], message)
             elif mp[:4] == "help" and level >= 1:
+                if utils == "on" and level >= 5:
+                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                    return
                 await help(message)
+            elif mp[:4] == "lock" and level >= 5:
+                await adm_maintenance(mp[5:], message)
         else:
+            maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='ticket'").fetchone()[0]
+            if maintenance == "on":
+                await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+                return
             channel = await client.fetch_channel(1088582109343514664)
             embed = Embed(title = f"Ticket from : {message.author}", description=f"{message.content}")
             embed.set_footer(text = f"id : {message.author.id}")
@@ -552,11 +681,15 @@ async def on_message(message):
 async def on_member_join(member):
     user = cursor.execute(f"SELECT omega_id FROM 'users' WHERE discord_id='{member.id}'").fetchone()
     if (not user):
-        uid = uuid.uuid4()
-        cursor.execute(f"DELETE FROM temp_auth WHERE discord_id={member.id}")
-        cursor.execute(f"INSERT INTO temp_auth (discord_id, code) VALUES ({member.id},'{uid}')")
-        db.commit()
         try :
+            maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='login'").fetchone()[0]
+            if maintenance == "on":
+                await member.send(f"Hello and welcome to the {member.guild.name} server!\n\nThis server is powered by the Omega Protocol bot and therefore has automatic permissions based on your account on the 42 intranet.\n\n**Please authenticate via the /login command\n\nFor any problem with this step, I invite you to PM the bot with your request\n\nThe Omega master, Ngennaro")
+                return
+            uid = uuid.uuid4()
+            cursor.execute(f"DELETE FROM temp_auth WHERE discord_id={member.id}")
+            cursor.execute(f"INSERT INTO temp_auth (discord_id, code) VALUES ({member.id},'{uid}')")
+            db.commit()
             await member.send(f"Hello and welcome to the {member.guild.name} server!\n\nThis server is powered by the Omega Protocol bot and therefore has automatic permissions based on your account on the 42 intranet.\n\n**Please authenticate via this link**\n{redirect}{uid}\n\nFor any problem with this step, I invite you to PM the bot with your request\n\nThe Omega master, Ngennaro")
         except :
             print(f"____________________\nfail to send a message to {member}")
@@ -841,6 +974,9 @@ async def disconect(id):
 async def main():
     i = 1
     number = int(cursor.execute(f"SELECT seq FROM 'sqlite_sequence' WHERE name='users'").fetchone()[0])
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
+    if maintenance == "on":
+        return
     if (not number):
         await asyncio.sleep(5)
         new = cursor.execute(f"SELECT discord_id,intra_id FROM 'new_users'").fetchall()
@@ -861,7 +997,8 @@ async def main():
                 await update(login,id)
                 cursor.execute(f"INSERT INTO 'users' (discord_id, intra_id) VALUES ({id},'{login}')")
                 db.commit()
-    while (i <= number):
+    while (i <= number and maintenance == "off"):
+        maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
         new = cursor.execute(f"SELECT discord_id,intra_id FROM 'new_users'").fetchall()
         if (not new):
             try :
@@ -895,7 +1032,17 @@ async def main():
 
 @tasks.loop(seconds=20)
 async def presence():
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='status'").fetchone()[0]
+    if maintenance == "on":
+        game = Game(name="🚧 maintenance 🚧")
+        await client.change_presence(status=Status.do_not_disturb, activity=game)
+        return
     for status in status_list:
+        maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='status'").fetchone()[0]
+        if maintenance == "on":
+            game = Game(name="🚧 maintenance 🚧")
+            await client.change_presence(status=Status.do_not_disturb, activity=game)
+            return
         game = Game(name=status)
         await client.change_presence(status=Status.do_not_disturb, activity=game)
         await asyncio.sleep(20)
@@ -908,12 +1055,16 @@ async def on_ready():
     presence.start()
     while (client.get_guild(int(1084295027783639080)) != None):
         await main()
+        maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
+        if maintenance == "on":
+            await asyncio.sleep(5)
     print("Unautorized bot version, please contact ngennaro (Gennaron#7378)")
     ngennaro = client.get_user(626861778030034945)
     if ngennaro != None:
         await ngennaro.send(f"Unautorized version of omega is runing as {client.user}")
-    async for current in client.fetch_guilds():
-        tree.clear_commands(guild=current)
-    await tree.sync()
+    module_list = cursor.execute(f"SELECT part,status FROM 'maintenance'").fetchall()
+    for module in module_list:
+        cursor.execute(f"UPDATE 'maintenance' SET status='on' WHERE part='{module[0]}'")
+        db.commit()
 
 client.run(os.getenv('BOT_TOKEN'))
