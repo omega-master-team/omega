@@ -332,22 +332,31 @@ async def help(message):
     color = random.randint(0, 16777215)
     color = Colour(color) 
     embed = Embed(title = f"{title}",color = color)
+    utils = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='admin_utils'").fetchone()[0]
+    sync = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='admin_sync'").fetchone()[0]
+    mstatus = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='status'").fetchone()[0]
     if level >= 5:
         embed.add_field(name = "__lock__", value = f"manage maintenance mod", inline = False)
     if level >= 4:
-        embed.add_field(name = "sync", value = f"syncronise un utilisateur avec omega", inline = False)
-        embed.add_field(name = "logout", value = f"déconecte un utilisateur", inline = False)
-        embed.add_field(name = "status", value = f"envoie les status du bot", inline = False)
-        embed.add_field(name = "play", value = f"set un status pour le bot", inline = False)
-        embed.add_field(name = "pause", value = f"retire un status du bot", inline = False)
-        embed.add_field(name = "leave", value = f"quitte un serveur", inline = False)
+        if sync != "on":
+            embed.add_field(name = "sync", value = f"syncronise un utilisateur avec omega", inline = False)
+            embed.add_field(name = "logout", value = f"déconecte un utilisateur", inline = False)
+        if mstatus != "on":
+            embed.add_field(name = "status", value = f"envoie les status du bot", inline = False)
+            embed.add_field(name = "play", value = f"set un status pour le bot", inline = False)
+            embed.add_field(name = "pause", value = f"retire un status du bot", inline = False)
+        if utils != "on":
+            embed.add_field(name = "leave", value = f"quitte un serveur", inline = False)
     if level >= 3:
-        embed.add_field(name = "join", value = f"genere une invitation vers le serveur", inline = False)
-        embed.add_field(name = "list", value = f"envoie la liste des serveur du bot", inline = False)
+        if utils != "on":
+            embed.add_field(name = "join", value = f"genere une invitation vers le serveur", inline = False)
+            embed.add_field(name = "list", value = f"envoie la liste des serveur du bot", inline = False)
     if level >= 2:
-        embed.add_field(name = "send", value = f"envoie un mp avec le bot", inline = False)
+        if utils != "on":
+            embed.add_field(name = "send", value = f"envoie un mp avec le bot", inline = False)
     if level >= 1:
-        embed.add_field(name = "stats", value = f"donne des chifres sur l'utilisation du bot", inline = False)
+        if utils != "on":
+            embed.add_field(name = "stats", value = f"donne des chifres sur l'utilisation du bot", inline = False)
     await message.channel.send(embed=embed)
 
 async def stats(message):
