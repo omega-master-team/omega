@@ -973,7 +973,7 @@ async def disconect(id):
 
 async def main():
     i = 1
-    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
+    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_task'").fetchone()[0]
     if maintenance == "on":
         return
     number = int(cursor.execute(f"SELECT seq FROM 'sqlite_sequence' WHERE name='users'").fetchone()[0])
@@ -998,7 +998,7 @@ async def main():
                 cursor.execute(f"INSERT INTO 'users' (discord_id, intra_id) VALUES ({id},'{login}')")
                 db.commit()
     while (i <= number and maintenance == "off"):
-        maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
+        maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_task'").fetchone()[0]
         new = cursor.execute(f"SELECT discord_id,intra_id FROM 'new_users'").fetchall()
         if (not new):
             try :
@@ -1055,10 +1055,10 @@ async def on_ready():
     presence.start()
     while (client.get_guild(int(1084295027783639080)) != None):
         await main()
-        maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
+        maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_task'").fetchone()[0]
         while maintenance == "on":
             await asyncio.sleep(2)
-            maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_config'").fetchone()[0]
+            maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='sync_task'").fetchone()[0]
     print("Unautorized bot version, please contact ngennaro (Gennaron#7378)")
     ngennaro = client.get_user(626861778030034945)
     if ngennaro != None:
