@@ -18,9 +18,11 @@ down:
 
 clean: #down
 	docker builder prune --all
+#	rm -rf oauth/target # rm binaries
 
 fclean: clean
 	docker system prune -a -f --volumes
+#	rm -rf .cargo # rm downloads
 
 info:
 	docker system df

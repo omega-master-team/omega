@@ -1,7 +1,5 @@
 FROM debian:bullseye-slim
 
-VOLUME /app/oauth /root/.cargo
-
 # Install rust dep
 RUN \
     apt-get update \
@@ -15,7 +13,7 @@ RUN \
 WORKDIR /app
 RUN mkdir -p /app/cert
 
+VOLUME /app/oauth
+
 COPY entrypoint.sh /app/entrypoint.sh
-
-
 ENTRYPOINT bash entrypoint.sh
