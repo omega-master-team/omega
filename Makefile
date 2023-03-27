@@ -10,6 +10,7 @@ logs:
 	${cmd} logs --follow
 
 up:
+	mkdir -p .cargo
 	${cmd} up --build -d
 
 down:

@@ -25,6 +25,7 @@ services:
     volumes:
       - ./omega/omega.db:/app/omega.db
       - ./oauth:/app/oauth
+      - ./.cargo:/root/.cargo
       #- file_privkey:/app/cert/privkey.pem:ro
       #- file_fullchain:/app/cert/fullchain.pem:ro
     ports:
