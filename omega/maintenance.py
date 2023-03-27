@@ -362,4 +362,4 @@ async def on_ready():
     await tree.sync()
     presence.start()
 
-client.run("MTA0MjgwMjE0ODM4OTQ0MTYzNw.GOiKQC.njVntL6pbOaXtSHoDzNP1qko3nwOGRQk4AX-ek") #(os.getenv('BOT_TOKEN'))
+client.run(os.getenv('BOT_TOKEN'))
