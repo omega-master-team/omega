@@ -15,6 +15,6 @@ RUN mkdir -p /app/cert
 
 COPY entrypoint.sh /app/entrypoint.sh
 
-VOLUME /app/oauth
+VOLUME /app/oauth /root/.cargo
 
 ENTRYPOINT bash entrypoint.sh
