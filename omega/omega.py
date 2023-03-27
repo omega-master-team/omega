@@ -656,9 +656,6 @@ async def on_message(message):
                     return
                 await logout_admin(mp[7:], message)
             elif mp[:4] == "help" and level >= 1:
-                if utils == "on" and level <= 5:
-                    await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
-                    return
                 await help(message)
             elif mp[:4] == "lock" and level >= 5:
                 await adm_maintenance(mp[5:], message)
