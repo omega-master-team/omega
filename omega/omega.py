@@ -273,21 +273,23 @@ async def on_interaction(interaction=Interaction):
         type = data['component_type']
         custom_id = data['custom_id']
         if type == 2:
-            maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='reaction_role'").fetchone()[0]
-            if maintenance == "on":
-                await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
-                return
-            guild = client.get_guild(interaction.guild_id)
-            role = guild.get_role(int(custom_id))
-            try:
-                if role in interaction.user.roles:
-                    await interaction.user.remove_roles(role)
-                    await interaction.response.send_message(f"Remove {role.name}", ephemeral=True, delete_after=1)
-                else:
-                    await interaction.user.add_roles(role)
-                    await interaction.response.send_message(f"Add {role.name}", ephemeral=True, delete_after=1)
-            except:
-                await interaction.response.send_message(f"someting went wrong", ephemeral=True, delete_after=3)
+            if custom_id[:9] == "reaction_":
+                maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='reaction_role'").fetchone()[0]
+                if maintenance == "on":
+                    await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+                    return
+                guild = client.get_guild(interaction.guild_id)
+                role = guild.get_role(int(custom_id[9:]))
+                try:
+                    if role in interaction.user.roles:
+                        await interaction.user.remove_roles(role)
+                        await interaction.response.send_message(f"Remove {role.name}", ephemeral=True, delete_after=1)
+                    else:
+                        await interaction.user.add_roles(role)
+                        await interaction.response.send_message(f"Add {role.name}", ephemeral=True, delete_after=1)
+                except:
+                    await interaction.response.send_message(f"someting went wrong", ephemeral=True, delete_after=3)
+
 
 @tree.command(name='reaction_role', description='create a reaction role button')
 @app_commands.guild_only()
@@ -319,7 +321,8 @@ async def launch_button(interaction: discord.Interaction,label:str,style: app_co
     elif style.value==4:
         style = ButtonStyle.grey
     view = discord.ui.View(timeout=None)
-    button = discord.ui.Button(label=label, custom_id=str(role.id), style=style)
+    custom_id = "reaction_" + str(role.id)
+    button = discord.ui.Button(label=label, custom_id=custom_id, style=style)
     view.add_item(button)
     await interaction.response.send_message("Success", ephemeral=True, delete_after=1)
     await interaction.channel.send(content=message, view = view)
