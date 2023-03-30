@@ -305,7 +305,7 @@ async def on_interaction(interaction=Interaction):
                     await interaction.response.send_message(f"someting went wrong", ephemeral=True, delete_after=3)
             if custom_id == "delete":
                 view = Cancel(timeout=20)
-                await interaction.response.send_message("Ticket deleted in 20 second", view=view)
+                await interaction.response.send_message("Ticket deleted in 20 second", view=view, delete_after=20)
                 view.message = message
                 await view.wait()
                 if view.foo is True:
@@ -318,20 +318,26 @@ async def on_interaction(interaction=Interaction):
                     channel = await client.fetch_channel(interaction.channel_id)
                     embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=Color.red())
                     await user.send(embed=embed)
-                    await asyncio.sleep(20)
                     await channel.delete()
             if custom_id == "archive":
-                user = cursor.execute(f"SELECT user_id FROM 'ticket' WHERE channel_id={interaction.channel_id}").fetchone()[0]
-                cursor.execute(f"DELETE FROM ticket WHERE channel_id='{interaction.channel_id}'")
-                db.commit()
-                user = await client.fetch_user(user)
-                channel = await client.fetch_channel(interaction.channel_id)
-                guild = client.get_guild(int(1084295027783639080))
-                category = discord.utils.get(guild.categories, id=1090795985820733612)
-                await channel.edit(name=f"{user}_old", category=category, sync_permissions=True)
-                embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=Colour.red())
-                await user.send(embed=embed)
-                await interaction.response.send_message("Ticket successfully archived")
+                view = Cancel(timeout=10)
+                await interaction.response.send_message("Ticket archived in 10 second", view=view, delete_after=10)
+                view.message = message
+                await view.wait()
+                if view.foo is True:
+                    return
+                elif view.foo is None:
+                    user = cursor.execute(f"SELECT user_id FROM 'ticket' WHERE channel_id={interaction.channel_id}").fetchone()[0]
+                    cursor.execute(f"DELETE FROM ticket WHERE channel_id='{interaction.channel_id}'")
+                    db.commit()
+                    user = await client.fetch_user(user)
+                    channel = await client.fetch_channel(interaction.channel_id)
+                    guild = client.get_guild(int(1084295027783639080))
+                    category = discord.utils.get(guild.categories, id=1090795985820733612)
+                    await channel.edit(name=f"{user}_old", category=category, sync_permissions=True)
+                    embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=Colour.red())
+                    await user.send(embed=embed)
+                    await interaction.response.send_message("Ticket successfully archived")
 
 #####################################################################################################################################################
 
