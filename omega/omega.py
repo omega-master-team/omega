@@ -276,7 +276,7 @@ class Cancel(discord.ui.View):
     
     @discord.ui.button(label="Cancel", style=discord.ButtonStyle.red)
     async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_message("Cancelling")
+        await interaction.response.send_message("Cancelling", delete_after=10)
         self.foo = True
         self.stop()
 
