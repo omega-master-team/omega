@@ -296,7 +296,7 @@ async def on_interaction(interaction=Interaction):
                 db.commit()
                 user = await client.fetch_user(user)
                 channel = await client.fetch_channel(interaction.channel_id)
-                embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=Colour.red)
+                embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=Color.red())
                 await user.send(embed=embed)
                 await interaction.response.send_message("Ticket deleted in 20 second")
                 await asyncio.sleep(20)
@@ -307,7 +307,7 @@ async def on_interaction(interaction=Interaction):
                 db.commit()
                 user = await client.fetch_user(user)
                 channel = await client.fetch_channel(interaction.channel_id)
-                embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=Colour.red)
+                embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=Colour.red())
                 await user.send(embed=embed)
                 await interaction.response.send_message("Ticket successfully archived")
 
@@ -721,7 +721,7 @@ async def on_message(message):
             
             channel = cursor.execute(f"SELECT channel_id FROM 'ticket' WHERE user_id={message.author.id}").fetchall()
             if (not channel):
-                embed = Embed(title = f"open a Ticket", description=f"Your a in proccess to create a ticket with the Omega staff\ndo you want to submit it ?", color=Colour.green)
+                embed = Embed(title = f"open a Ticket", description=f"Your a in proccess to create a ticket with the Omega staff\ndo you want to submit it ?", color=Colour.green())
 
                 view = Verify(timeout=50)
                 await message.channel.send(embed=embed, view=view)
