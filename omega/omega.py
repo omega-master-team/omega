@@ -305,11 +305,10 @@ async def on_interaction(interaction=Interaction):
                     await interaction.response.send_message(f"someting went wrong", ephemeral=True, delete_after=3)
             if custom_id == "delete":
                 view = Cancel(timeout=20)
-                message_delay = await interaction.response.send_message("Ticket deleted in 20 second", view=view)
+                await interaction.response.send_message("Ticket deleted in 20 second", view=view)
                 view.message = message
                 await view.wait()
                 if view.foo is True:
-                    await message_delay.delete()
                     return
                 elif view.foo is None:
                     user = cursor.execute(f"SELECT user_id FROM 'ticket' WHERE channel_id={interaction.channel_id}").fetchone()[0]
