@@ -333,10 +333,10 @@ async def on_interaction(interaction=Interaction):
                     channel = await client.fetch_channel(interaction.channel_id)
                     guild = client.get_guild(int(1084295027783639080))
                     category = discord.utils.get(guild.categories, id=1090795985820733612)
+                    await interaction.response.send_message("Ticket successfully archived")
                     await channel.edit(name=f"{user}_old", category=category, sync_permissions=True)
                     embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=Colour.red())
                     await user.send(embed=embed)
-                    await interaction.response.send_message("Ticket successfully archived")
 
 #####################################################################################################################################################
 
@@ -784,6 +784,7 @@ async def on_message(message):
                 for attachment in message.attachments:
                     await hook.send(attachment)
             await hook.delete()
+            return
     else:
         maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='ticket'").fetchone()[0]
         if maintenance == "on":
