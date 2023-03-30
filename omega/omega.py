@@ -304,7 +304,7 @@ async def on_interaction(interaction=Interaction):
                 except:
                     await interaction.response.send_message(f"someting went wrong", ephemeral=True, delete_after=3)
             if custom_id == "delete":
-                view = Cancel(20)
+                view = Cancel(timeout=20)
                 message_delay = await interaction.response.send_message("Ticket deleted in 20 second", view=view)
                 view.message = message
                 await view.wait()
