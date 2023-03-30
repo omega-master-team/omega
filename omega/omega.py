@@ -307,6 +307,7 @@ async def on_interaction(interaction=Interaction):
                 db.commit()
                 user = await client.fetch_user(user)
                 channel = await client.fetch_channel(interaction.channel_id)
+                guild = client.get_guild(int(1084295027783639080))
                 category = discord.utils.get(guild.categories, id=1090795985820733612)
                 await channel.edit(name=f"{user}_old", category=category)
                 embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=Colour.red())
