@@ -296,7 +296,7 @@ async def on_interaction(interaction=Interaction):
                 user = await client.fetch_user(user)
                 channel = await client.fetch_channel(interaction.channel_id)
                 embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team")
-                await user.send(embed)
+                await user.send(embed=embed)
                 await interaction.response.send_message("Ticket deleted in 20 second")
                 await asyncio.sleep(20)
                 await channel.delete()
@@ -307,7 +307,7 @@ async def on_interaction(interaction=Interaction):
                 user = await client.fetch_user(user)
                 channel = await client.fetch_channel(interaction.channel_id)
                 embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team")
-                await user.send(embed)
+                await user.send(embed=embed)
                 await interaction.response.send_message("Ticket successfully archived")
 
 #####################################################################################################################################################
