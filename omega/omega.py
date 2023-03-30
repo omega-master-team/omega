@@ -3,7 +3,6 @@ from discord import *
 from discord.ext import tasks
 import sqlite3
 import random
-import sys
 import datetime
 import uuid
 from time import strptime
@@ -272,7 +271,7 @@ class Cancel(discord.ui.View):
     foo : bool = None
     
     async def on_timeout(self) -> None:
-        await self.message.channel.send("💣")
+        a = 1
     
     @discord.ui.button(label="Cancel", style=discord.ButtonStyle.red)
     async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -544,7 +543,6 @@ async def logout_admin(command, message):
             embed.set_thumbnail(url=message.author.avatar.url)
         await channel.send(embed=embed)
     else:
-        print(command)
         cursor.execute(f"DELETE FROM users WHERE discord_id={command}")
         db.commit()
         await disconect(command)
@@ -827,7 +825,7 @@ async def on_member_join(member):
             db.commit()
             await member.send(f"Hello and welcome to the {member.guild.name} server!\n\nThis server is powered by the Omega Protocol bot and therefore has automatic permissions based on your account on the 42 intranet.\n\n**Please authenticate via this link**\n{redirect}{uid}\n\nFor any problem with this step, I invite you to PM the bot with your request\n\nThe Omega master, Ngennaro")
         except :
-            print(f"____________________\nfail to send a message to {member}")
+            return
 
 #####################################################################################################################################################
 
@@ -936,11 +934,10 @@ async def update(login, id):
                 try:
                     if (member.nick != name):
                         if (len(name) > 32):
-                            print(f"max len for nick : {login}, on {guild.name}")
                             name = name[:32]
                         await member.edit(nick=name)
                 except:
-                        print(f"403 for nick : {login}, on {guild.name}")
+                        continue
         
         #cursus sync#
         data_list = cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM 'cursus' WHERE guild_id='{guild.id}'").fetchall()
@@ -1119,7 +1116,6 @@ async def main():
                 id = current[0]
                 login = current[1]
 
-                print(f"____________________\nWe have now add : {id} {login}")
                 cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
                 db.commit()
                 dobble_login = cursor.execute(f"SELECT discord_id FROM 'users' WHERE intra_id='{login}'").fetchall()
