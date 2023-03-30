@@ -194,6 +194,7 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
     cursor.execute(f"INSERT INTO project (campus_id,intra_id,in_progress,finished,validated,guild_id,discord_id) VALUES ({campus_id},{intra_id},{in_progress.value},{finished.value},{validated.value},{interaction.guild_id},{int(role_id)})")
     db.commit()
     await interaction.response.send_message(f"configuration successfully update", ephemeral = True, delete_after=2)
+
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
 @tree.command(name = "nick", description = "set the nick parameters on the sever (&login and &campus works)")
@@ -295,7 +296,8 @@ async def on_interaction(interaction=Interaction):
                 db.commit()
                 user = await client.fetch_user(user)
                 channel = await client.fetch_channel(interaction.channel_id)
-                embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team")
+                color = Colour.red 
+                embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=color)
                 await user.send(embed=embed)
                 await interaction.response.send_message("Ticket deleted in 20 second")
                 await asyncio.sleep(20)
@@ -306,7 +308,8 @@ async def on_interaction(interaction=Interaction):
                 db.commit()
                 user = await client.fetch_user(user)
                 channel = await client.fetch_channel(interaction.channel_id)
-                embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team")
+                color = Colour.red 
+                embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=color)
                 await user.send(embed=embed)
                 await interaction.response.send_message("Ticket successfully archived")
 
@@ -720,7 +723,8 @@ async def on_message(message):
             
             channel = cursor.execute(f"SELECT channel_id FROM 'ticket' WHERE user_id={message.author.id}").fetchall()
             if (not channel):
-                embed = Embed(title = f"open a Ticket", description=f"Your a in proccess to create a ticket with the Omega staff\ndo you want to submit it ?")
+                color = Colour.green
+                embed = Embed(title = f"open a Ticket", description=f"Your a in proccess to create a ticket with the Omega staff\ndo you want to submit it ?", color=color)
 
                 view = Verify(timeout=50)
                 await message.channel.send(embed=embed, view=view)
