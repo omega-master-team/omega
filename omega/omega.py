@@ -295,7 +295,8 @@ async def on_interaction(interaction=Interaction):
                 db.commit()
                 user = await client.fetch_user(user)
                 channel = await client.fetch_channel(interaction.channel_id)
-                await user.send("Your ticket have been closed by the staff team")
+                embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team")
+                await user.send(embed)
                 await interaction.response.send_message("Ticket deleted in 20 second")
                 await asyncio.sleep(20)
                 await channel.delete()
@@ -305,7 +306,8 @@ async def on_interaction(interaction=Interaction):
                 db.commit()
                 user = await client.fetch_user(user)
                 channel = await client.fetch_channel(interaction.channel_id)
-                await user.send("Your ticket have been closed by the staff team")
+                embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team")
+                await user.send(embed)
                 await interaction.response.send_message("Ticket successfully archived")
 
 #####################################################################################################################################################
@@ -626,6 +628,25 @@ async def adm_maintenance(command, message):
     await message.channel.send("invalid module")
 
 
+class Verify(discord.ui.View):
+    
+    foo : bool = None
+    
+    async def on_timeout(self) -> None:
+        await self.message.channel.send("Ticket abort, Timedout")
+    
+    @discord.ui.button(label="Submit", style=discord.ButtonStyle.success)
+    async def submit(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Ticket created with succes\nyou can response here to talk with our staff team")
+        self.foo = True
+        self.stop()
+        
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.red)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Cancelling")
+        self.foo = False
+        self.stop()
+
 @client.event
 async def on_message(message):
     if (message.author == client.user):
@@ -699,6 +720,16 @@ async def on_message(message):
             
             channel = cursor.execute(f"SELECT channel_id FROM 'ticket' WHERE user_id={message.author.id}").fetchall()
             if (not channel):
+                embed = Embed(title = f"open a Ticket", description=f"Your a in proccess to create a ticket with the Omega staff\ndo you want to submit it ?")
+
+                view = Verify(timeout=50)
+                await message.channel.send(embed=embed, view=view)
+                view.message = message
+                await view.wait()
+                if view.foo is None:
+                    return
+                elif view.foo is False:
+                    return              
                 guild = client.get_guild(int(1084295027783639080))
                 category = discord.utils.get(guild.categories, id=1090772760415973417)
                 channel = await guild.create_text_channel(name=f"{message.author}_ticket", category=category)
@@ -714,7 +745,6 @@ async def on_message(message):
                 await channel.send(embed=embed, view=view)
                 cursor.execute(f"INSERT INTO 'ticket' (user_id, channel_id) VALUES ({message.author.id},{channel.id})")
                 db.commit()
-                await message.channel.send("Ticket created with succes\nyou can response here to talk with your staff team")
             else:
                 channel = channel[0][0]
                 channel = await client.fetch_channel(channel)
@@ -728,10 +758,6 @@ async def on_message(message):
                     await hook.send(attachment)
             await hook.delete()
     else:
-        maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='ticket'").fetchone()[0]
-        if maintenance == "on":
-            await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
-            return
         channel = cursor.execute(f"SELECT user_id FROM 'ticket' WHERE channel_id={message.channel.id}").fetchall()
         if (channel and message.content):
             channel = channel[0][0]
