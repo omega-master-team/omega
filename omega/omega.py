@@ -289,6 +289,26 @@ async def on_interaction(interaction=Interaction):
                         await interaction.response.send_message(f"Add {role.name}", ephemeral=True, delete_after=1)
                 except:
                     await interaction.response.send_message(f"someting went wrong", ephemeral=True, delete_after=3)
+            if custom_id == "delete":
+                user = cursor.execute(f"SELECT user_id FROM 'ticket' WHERE channel_id={interaction.channel_id}").fetchone()[0]
+                cursor.execute(f"DELETE FROM ticket WHERE channel_id='{interaction.channel_id}'")
+                db.commit()
+                user = await client.fetch_user(user)
+                channel = await client.fetch_channel(interaction.channel_id)
+                await user.send("Your ticket have been closed by the staff team")
+                await interaction.response.send_message("Ticket deleted in 20 second")
+                await asyncio.sleep(20)
+                await channel.delete()
+            if custom_id == "archive":
+                user = cursor.execute(f"SELECT user_id FROM 'ticket' WHERE channel_id={interaction.channel_id}").fetchone()[0]
+                cursor.execute(f"DELETE FROM ticket WHERE channel_id='{interaction.channel_id}'")
+                db.commit()
+                user = await client.fetch_user(user)
+                channel = await client.fetch_channel(interaction.channel_id)
+                await user.send("Your ticket have been closed by the staff team")
+                await interaction.response.send_message("Ticket successfully archived")
+
+#####################################################################################################################################################
 
 
 @tree.command(name='reaction_role', description='create a reaction role button')
@@ -676,13 +696,60 @@ async def on_message(message):
             if maintenance == "on":
                 await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
                 return
-            channel = await client.fetch_channel(1088582109343514664)
-            embed = Embed(title = f"Ticket from : {message.author}", description=f"{message.content}")
-            embed.set_footer(text = f"id : {message.author.id}")
+            
+            channel = cursor.execute(f"SELECT channel_id FROM 'ticket' WHERE user_id={message.author.id}").fetchall()
+            if (not channel):
+                guild = client.get_guild(int(1084295027783639080))
+                category = discord.utils.get(guild.categories, id=1090772760415973417)
+                channel = await guild.create_text_channel(name=f"{message.author}_ticket", category=category)
+                view = discord.ui.View(timeout=None)
+                button = discord.ui.Button(label="Archive", custom_id=f"archive", style=ButtonStyle.grey)
+                view.add_item(button)
+                button = discord.ui.Button(label="Close", custom_id=f"delete", style=ButtonStyle.danger)
+                view.add_item(button)
+                embed = Embed(title = f"Ticket from : {message.author}", description=f"close this ticket with the button below")
+                embed.set_footer(text = f"id : {message.author.id}")
+                if (str(message.author.avatar) != "None"):
+                    embed.set_thumbnail(url=message.author.avatar.url)
+                await channel.send(embed=embed, view=view)
+                cursor.execute(f"INSERT INTO 'ticket' (user_id, channel_id) VALUES ({message.author.id},{channel.id})")
+                db.commit()
+                await message.channel.send("Ticket created with succes\nyou can response here to talk with your staff team")
+            else:
+                channel = channel[0][0]
+                channel = await client.fetch_channel(channel)
+                await message.add_reaction('🚀')
+            avatar = await message.author.avatar.read()
+            hook = await channel.create_webhook(name=message.author.name, avatar=avatar)
+            if (message.content):
+                await hook.send(f"{message.content}")
+            if (message.attachments):
+                for attachment in message.attachments:
+                    await hook.send(attachment)
+            await hook.delete()
+    else:
+        maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='ticket'").fetchone()[0]
+        if maintenance == "on":
+            await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+            return
+        channel = cursor.execute(f"SELECT user_id FROM 'ticket' WHERE channel_id={message.channel.id}").fetchall()
+        if (channel and message.content):
+            channel = channel[0][0]
+            channel = await client.fetch_user(channel)
+            content = message.content
+            content = content.replace(f"{client.user.mention}", "")
+            embed = Embed(title = f"{message.author}", description=f"{content}")
             if (str(message.author.avatar) != "None"):
                 embed.set_thumbnail(url=message.author.avatar.url)
-            await channel.send(embed=embed)
-            await message.channel.send(f"Succesfully send to the administrator")
+            try :
+                await channel.send(embed=embed)
+                if (message.attachments):
+                    for attachment in message.attachments:
+                        await channel.send(attachment)
+                await message.add_reaction('🚀')
+            except:
+                await message.channel.send(f"Fail to mp this user")
+                return
 
 #####################################################################################################################################################
 
