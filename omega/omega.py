@@ -762,6 +762,10 @@ async def on_message(message):
                     await hook.send(attachment)
             await hook.delete()
     else:
+        maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='ticket'").fetchone()[0]
+        if maintenance == "on":
+            await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+            return
         channel = cursor.execute(f"SELECT user_id FROM 'ticket' WHERE channel_id={message.channel.id}").fetchall()
         if (channel and message.content):
             channel = channel[0][0]
