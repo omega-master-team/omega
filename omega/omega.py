@@ -676,9 +676,9 @@ class Verify(discord.ui.View):
 
 @client.event
 async def on_message(message):
-    if (message.author == client.user):
+    if (message.author == client.user or str(message.author.discriminator) == "0000"):
         return
-    if (str(message.channel.type) == "private"):
+    elif (str(message.channel.type) == "private"):
         level = admin_check(message.author.id)
         if (level >= 1):
             utils = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='admin_utils'").fetchone()[0]
@@ -784,7 +784,6 @@ async def on_message(message):
                 for attachment in message.attachments:
                     await hook.send(attachment)
             await hook.delete()
-            return
     else:
         maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='ticket'").fetchone()[0]
         if maintenance == "on":
