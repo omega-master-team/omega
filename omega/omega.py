@@ -472,7 +472,7 @@ async def status(command, message):
     if not status_list:
         await message.channel.send("No status currently runing, default mode = \"Someone else broke it\"")
         return
-    await message.channel.send("This status are runing:")
+    await message.channel.send("__This status are runing:__")
     for status in status_list:
         send = False
         i += 1
