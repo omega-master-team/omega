@@ -1208,4 +1208,4 @@ async def on_ready():
         cursor.execute(f"UPDATE 'maintenance' SET status='on' WHERE part='{module[0]}'")
         db.commit()
 
-client.run("MTA4NDI0NjkzMzIyNjQwMTgxMg.GDJKTg.7HFD0NPq3vVjdcaFYrMHEUqfdfhaLFzVTVjr_k") #(os.getenv('BOT_TOKEN'))
+client.run(os.getenv('BOT_TOKEN'))
