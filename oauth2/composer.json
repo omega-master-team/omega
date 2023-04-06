@@ -1,0 +1,20 @@
+{
+    "name": "valktaelen/omega_oauth2",
+    "description": "Oauth2 on 42 intranet for protocole omega (discord)",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "protocole omega"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "altorouter/altorouter": "dev-master",
+        "rexlabs/hyper-http": "^2.6"
+    }
+}
