@@ -567,6 +567,7 @@ async def logout_admin(command, message):
 async def list(message):
     i = 0
     msg = ""
+    await message.channel.send("__Omega are running on this server:__")
     async for current in client.fetch_guilds():
         send = False
         i += 1
