@@ -5,3 +5,4 @@ target/
 test.py
 .cargo
 vendor/
+/mariadb/volume
