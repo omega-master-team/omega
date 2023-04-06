@@ -468,10 +468,15 @@ async def send(command, message):
 async def status(command, message):
     i = 0
     msg = ""
+    status_list = cursor.execute(f"SELECT name FROM 'status'").fetchall()
+    if not status_list:
+        await message.channel.send("No status currently runing, default mode = \"Someone else broke it\"")
+        return
+    await message.channel.send("This status are runing:")
     for status in status_list:
         send = False
         i += 1
-        msg = f"{msg}\n{status}"
+        msg = f"{msg}\n{status[0]}"
         if (i>=15):
             send = True
             i = 0
@@ -481,7 +486,8 @@ async def status(command, message):
         await message.channel.send(msg)
 
 async def new_status(command, message):
-    status_list.append(command)
+    cursor.execute(f"INSERT INTO status (name) VALUES ('{command}')")
+    db.commit()
     await message.channel.send(f"Add : {command}")
     channel = client.get_channel(1088582242290368572)
     title = f"{message.author} set a new status"
@@ -493,7 +499,8 @@ async def new_status(command, message):
     await channel.send(embed=embed)
 
 async def rm_status(command, message):
-    status_list.remove(command)
+    cursor.execute(f"DELETE FROM status WHERE name='{command}'")
+    db.commit()
     await message.channel.send(f"Remove : {command}")
     channel = client.get_channel(1088582242290368572)
     title = f"{message.author} remove a status"
@@ -1160,12 +1167,17 @@ async def main():
 
 ##################################################setup discord and call token##################################################################
 
-@tasks.loop(seconds=20)
+@tasks.loop(seconds=15)
 async def presence():
     maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='status'").fetchone()[0]
     if maintenance == "on":
         game = Game(name="🚧 maintenance 🚧")
         await client.change_presence(status=Status.do_not_disturb, activity=game)
+        return
+    status_list = cursor.execute(f"SELECT name FROM 'status'").fetchall()
+    if not status_list:
+        game = Game(name="Someone else broke it")
+        await client.change_presence(status=Status.idle, activity=game)
         return
     for status in status_list:
         maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='status'").fetchone()[0]
@@ -1173,11 +1185,9 @@ async def presence():
             game = Game(name="🚧 maintenance 🚧")
             await client.change_presence(status=Status.do_not_disturb, activity=game)
             return
-        game = Game(name=status)
-        await client.change_presence(status=Status.do_not_disturb, activity=game)
-        await asyncio.sleep(20)
-
-status_list = ["Someone else broke it"]
+        game = Game(name=status[0])
+        await client.change_presence(status=Status.online, activity=game)
+        await asyncio.sleep(15)
 
 @client.event
 async def on_ready():
@@ -1198,4 +1208,4 @@ async def on_ready():
         cursor.execute(f"UPDATE 'maintenance' SET status='on' WHERE part='{module[0]}'")
         db.commit()
 
-client.run(os.getenv('BOT_TOKEN'))
+client.run("MTA4NDI0NjkzMzIyNjQwMTgxMg.GDJKTg.7HFD0NPq3vVjdcaFYrMHEUqfdfhaLFzVTVjr_k") #(os.getenv('BOT_TOKEN'))
