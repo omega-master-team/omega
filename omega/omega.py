@@ -1,7 +1,6 @@
 import discord
 from discord import *
 from discord.ext import tasks
-import sqlite3
 import random
 import datetime
 import uuid
@@ -17,9 +16,16 @@ from oauthlib.oauth2 import BackendApplicationClient
 import json
 from builtins import input
 
-db = sqlite3.connect("omega.db")
+import mysql.connector
+
+db = mysql.connector.connect(
+  host="mariadb",
+  user=os.getenv('MYSQL_USER'),
+  password=os.getenv('MYSQL_PASSWORD'),
+  database=os.getenv('MYSQL_DATABASE')
+)
 cursor = db.cursor()
-       
+
 intents = Intents.default()
 intents.members = True
 client = Client(intents=intents)
