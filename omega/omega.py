@@ -164,7 +164,7 @@ async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
-    cursor.execute(f"INSERT INTO {type.name} (campus_id,intra_id, guild_id, discord_id) VALUES ({campus_id},{intra_id},{interaction.guild_id},{int(role_id)})")
+    cursor.execute("INSERT INTO %s (campus_id,intra_id, guild_id, discord_id) VALUES (%s,%s,%s,%s)", (type.name, campus_id, intra_id, interaction.guild_id, role_id))
     db.commit()
     await interaction.response.send_message(f"configuration successfully update", ephemeral = True, delete_after=2)
 
@@ -196,7 +196,7 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
     
-    cursor.execute(f"INSERT INTO project (campus_id,intra_id,in_progress,finished,validated,guild_id,discord_id) VALUES ({campus_id},{intra_id},{in_progress.value},{finished.value},{validated.value},{interaction.guild_id},{int(role_id)})")
+    cursor.execute("INSERT INTO project (campus_id,intra_id,in_progress,finished,validated,guild_id,discord_id) VALUES (%s,%s,%s,%s,%s,%s,%s)", (campus_id,intra_id,in_progress.value,finished.value,validated.value,interaction.guild_id,role_id))
     db.commit()
     await interaction.response.send_message(f"configuration successfully update", ephemeral = True, delete_after=2)
 
@@ -214,7 +214,7 @@ async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
-    cursor.execute(f"INSERT INTO nick (campus_id,format,guild_id) VALUES ({campus_id},'{namming_pattern}',{interaction.guild.id})")
+    cursor.execute("INSERT INTO nick (campus_id,format,guild_id) VALUES (%s,%s,%s)", (campus_id,namming_pattern,interaction.guild.id))
     db.commit()
     if (len(namming_pattern) > 20):
         await interaction.response.send_message(f"configuration successfully update\nWarning, the max len for a nickname is 32 so you can have problem", ephemeral = True, delete_after=3)
@@ -264,9 +264,9 @@ async def delete(interaction: Interaction,type: app_commands.Choice[int], id_fro
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
     if (id_from.name == "role_id"):
-        cursor.execute(f"DELETE FROM {type.name} WHERE discord_id={int(id)} and guild_id={interaction.guild.id}")
+        cursor.execute("DELETE FROM %s WHERE discord_id=%s and guild_id=%s", (type.name,id,interaction.guild.id))
     elif (id_from.name == "intra_id"):
-        cursor.execute(f"DELETE FROM {type.name} WHERE intra_id={int(id)} and guild_id={interaction.guild.id}")
+        cursor.execute("DELETE FROM %s WHERE intra_id=%s and guild_id=%s", (type.name,id,interaction.guild.id))
     db.commit()
     await interaction.response.send_message(f"configuration successfully update", ephemeral = True)
 
