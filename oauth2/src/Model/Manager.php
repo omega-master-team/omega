@@ -17,7 +17,7 @@ class Manager {
                 self::$db = new PDO($dsn, $_ENV['MYSQL_USER'], $_ENV['MYSQL_PASSWORD']);
             } catch (\Throwable $th) {
                 self::$db = null;
-                View::generatePage(500, 'error');
+                View::generatePage(500, 'code 101');
                 exit;
             }
         }   

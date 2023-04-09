@@ -16,7 +16,7 @@ class View {
 		503 => 'Maintenance en cours'
 	];
 
-    private static  function generateError(int $errorCode) : string {
+    private static  function generateError(int $errorCode, string $pageErrorPos) : string {
 		if ($errorCode < 400 || $errorCode > 600)
 			throw new Exception('Code d\' erreur incorrect');
 		if ($errorCode < 500)
@@ -29,7 +29,7 @@ class View {
 		ob_start();
 		?>
         <div class="page">
-			<p class="error"><?= $state ?></p>
+			<p class="error"><?= $state . ' ' . $pageErrorPos ?></p>
 		</div>
 		<?php
 		return ob_get_clean();
@@ -37,7 +37,7 @@ class View {
 
     public static function generatePage(int $code = 200, string $page, $data = null) {
         if ($code >= 400) {
-            $pageContent = self::generateError($code);
+            $pageContent = self::generateError($code, $page);
 			$pageName = $code;
         } else {
 			ob_start();

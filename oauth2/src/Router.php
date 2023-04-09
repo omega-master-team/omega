@@ -21,7 +21,7 @@ class Router {
             $_ENV['MYSQL_DATABASE'] == false
         )
         {
-            View::generatePage(500, 'error');
+            View::generatePage(500, 'code 501');
             exit;
         }
         $this->router = new \AltoRouter();
@@ -50,7 +50,7 @@ class Router {
                 return call_user_func_array($match['target'], $match['params']);
             }
         } else {
-            View::generatePage(404, '');
+            View::generatePage(404, 'code 502');
         }
     }
     public function generate($routeName, array $params = []) {
