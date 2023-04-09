@@ -1,7 +1,9 @@
 <?php
 namespace App\Controller;
 
+use App\Model\Manager;
 use App\View\View;
+use PDO;
 use Rexlabs\HyperHttp\Hyper;
 
 class MainController {
@@ -26,8 +28,8 @@ class MainController {
         $codeIntra = $_GET['code'];
         if (isset($_SESSION) && isset($_SESSION['code']))
             $codeDiscord = $_SESSION['code'];
-            $data_token = json_encode([
-                'code' => $codeIntra,
+        $data_token = json_encode([
+            'code' => $codeIntra,
             'client_id' => $_ENV['API_UID'],
             'client_secret' => $_ENV['API_SECRET'],
             'grant_type' => 'authorization_code',
@@ -48,10 +50,28 @@ class MainController {
                 return View::generatePage(400, 'error');
             }
             $tmp = $response->toArray();
-            // echo '<pre>';
-            // var_dump($tmp);
-            // echo '</pre>';
-            // TODO db
+            if (isset($tmp, $tmp['login'])) {
+                echo '<pre>';
+                var_dump($tmp);
+                echo '</pre>';
+                $manager = new Manager();
+                $waiting_for_connect = $manager->exec('SELECT discord_id, code FROM temp_auth WHERE code = :code',
+                    [':code' => [$codeDiscord, PDO::PARAM_STR]]);
+                if ($waiting_for_connect !== false && count($waiting_for_connect) === 1) {
+                    $add_to_new = $manager->exec('INSERT INTO new_users (discord_id, intra_id) VALUES (:discord_id, :intra_id)',
+                        [':discord_id' => [$waiting_for_connect[0]['discord_id'], PDO::PARAM_INT], ':intra_id' => [$tmp['login'], PDO::PARAM_STR]]);
+                    if ($add_to_new !== false) {
+                        $del = $manager->exec('DELETE FROM temp_auth WHERE discord_id = :discord_id',
+                            [':discord_id' => [$waiting_for_connect[0]['discord_id'], PDO::PARAM_INT]]);
+                    } else {
+                        return View::generatePage(500, 'error');
+                    }
+                } else {
+                    return View::generatePage(403, 'error');
+                }
+            }
+            else
+                return View::generatePage(403, 'error');
             return View::generatePage(201, 'connected');
         } else {
             return View::generatePage(500, 'error');

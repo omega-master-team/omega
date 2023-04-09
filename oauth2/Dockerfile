@@ -3,7 +3,7 @@ FROM debian:bullseye-slim
 RUN \
     apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y php-cli libzip-dev \
+    && apt-get install -y php-cli libzip-dev php-mysql \
     && apt-get clean
 
 WORKDIR /app
