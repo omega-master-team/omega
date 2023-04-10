@@ -67,12 +67,14 @@ services:
       - intern_web
   
   composer:
-    image: composer:latest
+    build:
+      context: composer
+      dockerfile: Dockerfile
     container_name: composer
     hostname: composer
     volumes:
-      - ../oauth2:/app
-    command: composer update
+      - ./oauth2:/app
+    command: 'composer -W u'
 
   nginx:
     build:
