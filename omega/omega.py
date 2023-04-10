@@ -4,6 +4,7 @@ from discord.ext import tasks
 import random
 import datetime
 import uuid
+import time
 from time import strptime
 from datetime import datetime
 import asyncio
@@ -18,13 +19,20 @@ from builtins import input
 
 import mysql.connector
 
-db = mysql.connector.connect(
-  host="mariadb",
-  user=os.getenv('MYSQL_USER'),
-  password=os.getenv('MYSQL_PASSWORD'),
-  database=os.getenv('MYSQL_DATABASE')
-)
-cursor = db.cursor()
+connected = False
+while (connected != True):
+    try:
+        db = mysql.connector.connect(
+          host="mariadb",
+          user=os.getenv('MYSQL_USER'),
+          password=os.getenv('MYSQL_PASSWORD'),
+          database=os.getenv('MYSQL_DATABASE')
+        )
+        connected = True
+    except:
+        print("Db connection failed, retry in 5 seconds...")
+        time.sleep(5)
+cursor = db.cursor(buffered=True)
 
 intents = Intents.default()
 intents.members = True
@@ -72,7 +80,8 @@ def logout_cooldown(interaction: Interaction):
 
 @tree.command(name = "help", description = "Send the bot command list")
 async def help(interaction: Interaction):
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='base'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='base'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
         return
@@ -100,7 +109,8 @@ async def help(interaction: Interaction):
 @tree.command(name = "login", description = "login you with your intra")
 @app_commands.checks.dynamic_cooldown(login_cooldown)
 async def sign_up(interaction: Interaction):
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='login'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='login'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
         return
@@ -119,7 +129,8 @@ async def on_test_error(interaction: discord.Interaction, error: app_commands.Ap
 @tree.command(name = "logout", description = "remove all your acces and your omega connection")
 @app_commands.checks.dynamic_cooldown(logout_cooldown)
 async def logout(interaction: Interaction):
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='login'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='login'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
         return
@@ -137,7 +148,8 @@ async def on_test_error(interaction: discord.Interaction, error: app_commands.Ap
 
 @tree.command(name = "ping", description = "send the bot ping")
 async def ping(interaction: Interaction):
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='base'").fetchone()[0]
+    cursor.execute("SELECT status FROM maintenance WHERE part='base'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
         return
@@ -155,7 +167,8 @@ async def ping(interaction: Interaction):
 ])
 @app_commands.describe(intra_id='the id of this item on intranet', role='the role to give', campus_id='the campus needed')
 async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id: int, role: discord.Role, campus_id: int=0):
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
         return
@@ -164,7 +177,7 @@ async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
-    cursor.execute("INSERT INTO %s (campus_id,intra_id, guild_id, discord_id) VALUES (%s,%s,%s,%s)", (type.name, campus_id, intra_id, interaction.guild_id, role_id))
+    cursor.execute(f"INSERT INTO {type.name} (campus_id,intra_id, guild_id, discord_id) VALUES ({campus_id}, {intra_id}, {interaction.guild_id}, {role_id})")
     db.commit()
     await interaction.response.send_message(f"configuration successfully update", ephemeral = True, delete_after=2)
 
@@ -186,7 +199,8 @@ async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id
 ])
 @app_commands.describe(intra_id='the id of this item on intranet', role='the role to give', campus_id='the campus needed')
 async def sync_project(interaction: Interaction, intra_id: int, in_progress: app_commands.Choice[int], finished: app_commands.Choice[int], validated: app_commands.Choice[int], role: discord.Role, campus_id: int=0):
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
         return
@@ -196,7 +210,7 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
     
-    cursor.execute("INSERT INTO project (campus_id,intra_id,in_progress,finished,validated,guild_id,discord_id) VALUES (%s,%s,%s,%s,%s,%s,%s)", (campus_id,intra_id,in_progress.value,finished.value,validated.value,interaction.guild_id,role_id))
+    cursor.execute(f"INSERT INTO project (campus_id,intra_id,in_progress,finished,validated,guild_id,discord_id) VALUES ({campus_id},{intra_id},{in_progress.value},{finished.value},{validated.value},{interaction.guild_id},{role_id})")
     db.commit()
     await interaction.response.send_message(f"configuration successfully update", ephemeral = True, delete_after=2)
 
@@ -206,7 +220,8 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
 @app_commands.guild_only()
 @app_commands.describe(namming_pattern='the patern to aply (&login and &campus are a dynamic value)', campus_id='the campus needed')
 async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
         return
@@ -214,7 +229,7 @@ async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
-    cursor.execute("INSERT INTO nick (campus_id,format,guild_id) VALUES (%s,%s,%s)", (campus_id,namming_pattern,interaction.guild.id))
+    cursor.execute(f"INSERT INTO nick (campus_id,format,guild_id) VALUES ({campus_id},'{namming_pattern}',{interaction.guild.id})")
     db.commit()
     if (len(namming_pattern) > 20):
         await interaction.response.send_message(f"configuration successfully update\nWarning, the max len for a nickname is 32 so you can have problem", ephemeral = True, delete_after=3)
@@ -226,7 +241,8 @@ async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
 @tree.command(name = "nick_reset", description = "reset the nick parameters on the sever")
 @app_commands.guild_only()
 async def nick_reset(interaction: Interaction):
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
         return
@@ -255,7 +271,8 @@ async def nick_reset(interaction: Interaction):
 ])
 @app_commands.describe(id_from='the type of id', id='the corresponding id')
 async def delete(interaction: Interaction,type: app_commands.Choice[int], id_from: app_commands.Choice[int], id: str):
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
         return
@@ -264,9 +281,9 @@ async def delete(interaction: Interaction,type: app_commands.Choice[int], id_fro
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True)
         return
     if (id_from.name == "role_id"):
-        cursor.execute("DELETE FROM %s WHERE discord_id=%s and guild_id=%s", (type.name,id,interaction.guild.id))
+        cursor.execute(f"DELETE FROM {type.name} WHERE discord_id={id} and guild_id={interaction.guild.id}")
     elif (id_from.name == "intra_id"):
-        cursor.execute("DELETE FROM %s WHERE intra_id=%s and guild_id=%s", (type.name,id,interaction.guild.id))
+        cursor.execute(f"DELETE FROM {type.name} WHERE intra_id={id} and guild_id={interaction.guild.id}")
     db.commit()
     await interaction.response.send_message(f"configuration successfully update", ephemeral = True)
 
@@ -293,7 +310,8 @@ async def on_interaction(interaction=Interaction):
         custom_id = data['custom_id']
         if type == 2:
             if custom_id[:9] == "reaction_":
-                maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='reaction_role'").fetchone()[0]
+                cursor.execute(f"SELECT status FROM maintenance WHERE part='reaction_role'")
+                maintenance = cursor.fetchone()[0]
                 if maintenance == "on":
                     await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
                     return
@@ -316,7 +334,8 @@ async def on_interaction(interaction=Interaction):
                 if view.foo is True:
                     return
                 elif view.foo is None:
-                    user = cursor.execute(f"SELECT user_id FROM ticket WHERE channel_id={interaction.channel_id}").fetchone()[0]
+                    cursor.execute(f"SELECT user_id FROM ticket WHERE channel_id={interaction.channel_id}")
+                    user = cursor.fetchone()[0]
                     cursor.execute(f"DELETE FROM ticket WHERE channel_id='{interaction.channel_id}'")
                     db.commit()
                     user = await client.fetch_user(user)
@@ -332,7 +351,8 @@ async def on_interaction(interaction=Interaction):
                 if view.foo is True:
                     return
                 elif view.foo is None:
-                    user = cursor.execute(f"SELECT user_id FROM ticket WHERE channel_id={interaction.channel_id}").fetchone()[0]
+                    cursor.execute(f"SELECT user_id FROM ticket WHERE channel_id={interaction.channel_id}")
+                    user = cursor.fetchone()[0]
                     cursor.execute(f"DELETE FROM ticket WHERE channel_id='{interaction.channel_id}'")
                     db.commit()
                     user = await client.fetch_user(user)
@@ -356,7 +376,8 @@ async def on_interaction(interaction=Interaction):
 ])
 @app_commands.describe(label='the button content', style='the button color', role='the role to give', message='An header message')
 async def launch_button(interaction: discord.Interaction,label:str,style: app_commands.Choice[int],role:discord.Role, message: str=""):
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='reaction_role'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='reaction_role'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
         return
@@ -390,9 +411,12 @@ async def help(message):
     color = random.randint(0, 16777215)
     color = Colour(color) 
     embed = Embed(title = f"{title}",color = color)
-    utils = cursor.execute(f"SELECT status FROM maintenance WHERE part='admin_utils'").fetchone()[0]
-    sync = cursor.execute(f"SELECT status FROM maintenance WHERE part='admin_sync'").fetchone()[0]
-    mstatus = cursor.execute(f"SELECT status FROM maintenance WHERE part='status'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='admin_utils'")
+    utils = cursor.fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='admin_sync'")
+    sync = cursor.fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='status'")
+    mstatus = cursor.fetchone()[0]
     if level >= 5:
         embed.add_field(name = "__lock__", value = f"manage maintenance mod", inline = False)
     if level >= 4:
@@ -419,13 +443,21 @@ async def help(message):
 
 async def stats(message):
     wait = await message.channel.send("waiting...")
-    student_count = len(cursor.execute(f"SELECT intra_id FROM users").fetchall())
-    nick_count = len(cursor.execute(f"SELECT campus_id FROM nick").fetchall())
-    cursus_count = len(cursor.execute(f"SELECT campus_id FROM cursus").fetchall())
-    coalition_count = len(cursor.execute(f"SELECT campus_id FROM coa").fetchall())
-    project_count = len(cursor.execute(f"SELECT campus_id FROM project").fetchall())
-    groups_count = len(cursor.execute(f"SELECT campus_id FROM groups").fetchall())
-    years_count = len(cursor.execute(f"SELECT campus_id FROM years").fetchall())
+    cursor.execute(f"SELECT intra_id FROM users")
+    student_count = len(cursor.fetchall())
+    cursor.execute(f"SELECT campus_id FROM nick")
+    nick_count = len(cursor.fetchall())
+    cursor.execute(f"SELECT campus_id FROM cursus")
+    cursus_count = len(cursor.fetchall())
+    cursor.execute(f"SELECT campus_id FROM coa")
+    coalition_count = len(cursor.fetchall())
+    cursor.execute(f"SELECT campus_id FROM project")
+    project_count = len(cursor.fetchall())
+    cursor.execute(f"SELECT campus_id FROM groups")
+    groups_count = len(cursor.fetchall())
+    cursor.execute(f"SELECT campus_id FROM years")
+    years_count = len(cursor.fetchall())
+
     global_count = cursus_count + coalition_count + project_count + groups_count + years_count + nick_count
     server_count = 0
     async for current in client.fetch_guilds():
@@ -474,7 +506,8 @@ async def send(command, message):
 async def status(command, message):
     i = 0
     msg = ""
-    status_list = cursor.execute(f"SELECT name FROM status").fetchall()
+    cursor.execute(f"SELECT name FROM status")
+    status_list = cursor.fetchall()
     if not status_list:
         await message.channel.send("No status currently runing, default mode = \"Someone else broke it\"")
         return
@@ -541,7 +574,8 @@ async def logout_admin(command, message):
     pdt = await message.channel.send("Waiting...")
     if command[:5] == "login" or command[:5] == "intra":
         command = command[6:]
-        dobble_login = cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{command}'").fetchall()
+        cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{command}'")
+        dobble_login = cursor.fetchall()
         cursor.execute(f"DELETE FROM users WHERE intra_id='{command}'")
         db.commit()
         for dobble in dobble_login:
@@ -627,7 +661,8 @@ async def srv_leave(command, message):
 async def adm_maintenance(command, message):
     command = command.split(" ")
     sub = command[0]
-    module_list = cursor.execute(f"SELECT part,status FROM maintenance").fetchall()
+    cursor.execute(f"SELECT part,status FROM maintenance")
+    module_list = cursor.fetchall()
     if sub == "list":
         title = f"Maintenance module status"
         color = random.randint(0, 16777215)
@@ -694,9 +729,12 @@ async def on_message(message):
     elif (str(message.channel.type) == "private"):
         level = admin_check(message.author.id)
         if (level >= 1):
-            utils = cursor.execute(f"SELECT status FROM maintenance WHERE part='admin_utils'").fetchone()[0]
-            sync = cursor.execute(f"SELECT status FROM maintenance WHERE part='admin_sync'").fetchone()[0]
-            mstatus = cursor.execute(f"SELECT status FROM maintenance WHERE part='status'").fetchone()[0]
+            cursor.execute(f"SELECT status FROM maintenance WHERE part='admin_utils'")
+            utils = cursor.fetchone()[0]
+            cursor.execute(f"SELECT status FROM maintenance WHERE part='admin_sync'")
+            sync = cursor.fetchone()[0]
+            cursor.execute(f"SELECT status FROM maintenance WHERE part='status'")
+            mstatus = cursor.fetchone()[0]
             mp = message.content
             if mp[:5] == "stats" and level >= 1:
                 if utils == "on":
@@ -753,12 +791,14 @@ async def on_message(message):
             elif mp[:4] == "lock" and level >= 5:
                 await adm_maintenance(mp[5:], message)
         else:
-            maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='ticket'").fetchone()[0]
+            cursor.execute(f"SELECT status FROM maintenance WHERE part='ticket'")
+            maintenance = cursor.fetchone()[0]
             if maintenance == "on":
                 await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
                 return
             
-            channel = cursor.execute(f"SELECT channel_id FROM ticket WHERE user_id={message.author.id}").fetchall()
+            cursor.execute(f"SELECT channel_id FROM ticket WHERE user_id={message.author.id}")
+            channel = cursor.fetchall()
             if (not channel):
                 embed = Embed(title = f"open a Ticket", description=f"Your a in proccess to create a ticket with the Omega staff\ndo you want to submit it ?", color=Colour.green())
 
@@ -798,11 +838,13 @@ async def on_message(message):
                     await hook.send(attachment)
             await hook.delete()
     else:
-        maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='ticket'").fetchone()[0]
+        cursor.execute(f"SELECT status FROM maintenance WHERE part='ticket'")
+        maintenance = cursor.fetchone()[0]
         if maintenance == "on":
             await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
             return
-        channel = cursor.execute(f"SELECT user_id FROM ticket WHERE channel_id={message.channel.id}").fetchall()
+        cursor.execute(f"SELECT user_id FROM ticket WHERE channel_id={message.channel.id}")
+        channel = cursor.fetchall()
         if (channel and message.content):
             channel = channel[0][0]
             channel = await client.fetch_user(channel)
@@ -825,10 +867,12 @@ async def on_message(message):
 
 @client.event
 async def on_member_join(member):
-    user = cursor.execute(f"SELECT omega_id FROM users WHERE discord_id='{member.id}'").fetchone()
+    cursor.execute(f"SELECT omega_id FROM users WHERE discord_id='{member.id}'")
+    user = cursor.fetchone()[0]
     if (not user):
         try :
-            maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='login'").fetchone()[0]
+            cursor.execute(f"SELECT status FROM maintenance WHERE part='login'")
+            maintenance = cursor.fetchone()[0]
             if maintenance == "on":
                 await member.send(f"Hello and welcome to the {member.guild.name} server!\n\nThis server is powered by the Omega Protocol bot and therefore has automatic permissions based on your account on the 42 intranet.\n\n**Please authenticate via the /login command\n\nFor any problem with this step, I invite you to PM the bot with your request\n\nThe Omega master, Ngennaro")
                 return
@@ -936,7 +980,8 @@ async def update(login, id):
 
     for guild in guild_list:
         #nick sync#
-        data_list = cursor.execute(f"SELECT campus_id,format FROM nick WHERE guild_id='{guild.id}'").fetchall()
+        cursor.execute(f"SELECT campus_id,format FROM nick WHERE guild_id='{guild.id}'")
+        data_list = cursor.fetchall()
         member =  guild.get_member(id)
         for data in data_list:
             campus_id = data[0]
@@ -953,7 +998,8 @@ async def update(login, id):
                         continue
         
         #cursus sync#
-        data_list = cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM cursus WHERE guild_id='{guild.id}'").fetchall()
+        cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM cursus WHERE guild_id='{guild.id}'")
+        data_list = cursor.fetchall()
         for data in data_list:
             try:
                 campus_id = data[0]
@@ -974,7 +1020,8 @@ async def update(login, id):
                 print(f"error with role intra: {groups}, discord:{discord_id} on {guild.name}")
         
         #groups sync#
-        data_list = cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM groups WHERE guild_id='{guild.id}'").fetchall()
+        cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM groups WHERE guild_id='{guild.id}'")
+        data_list = cursor.fetchall()
         for data in data_list:
             try:
                 campus_id = data[0]
@@ -990,7 +1037,8 @@ async def update(login, id):
                 print(f"error with role intra: {groups}, discord:{discord_id} on {guild.name}")
         
         #project sync#
-        data_list = cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id='{guild.id}'").fetchall()
+        cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id='{guild.id}'")
+        data_list = cursor.fetchall()
         for data in data_list:
             try:
                 campus_id = data[0]
@@ -1024,7 +1072,8 @@ async def update(login, id):
                 print(f"error with role intra: {groups}, discord:{discord_id} on {guild.name}")
         
         #coa sync#
-        data_list = cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM coa WHERE guild_id='{guild.id}'").fetchall()
+        cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM coa WHERE guild_id='{guild.id}'")
+        data_list = cursor.fetchall()
         for data in data_list:
             try:
                 campus_id = data[0]
@@ -1040,7 +1089,8 @@ async def update(login, id):
                 print(f"error with role intra: {coa}, discord:{discord_id} on {guild.name}")
         
         #years sync#
-        data_list = cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM years WHERE guild_id='{guild.id}'").fetchall()
+        cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM years WHERE guild_id='{guild.id}'")
+        data_list = cursor.fetchall()
         for data in data_list:
             try:
                 campus_id = data[0]
@@ -1063,7 +1113,8 @@ async def disconect(id):
     for guild in guild_list:
         member =  guild.get_member(int(id))
         #cursus sync#    
-        data_list = cursor.execute(f"SELECT discord_id FROM cursus WHERE guild_id='{guild.id}'").fetchall()
+        cursor.execute(f"SELECT discord_id FROM cursus WHERE guild_id='{guild.id}'")
+        data_list = cursor.fetchall()
         for data in data_list:
             try:
                 data = data[0]
@@ -1074,7 +1125,8 @@ async def disconect(id):
                 print(f"error to remove: {role}, discord:{data} on {guild.name}")
         
         #groups sync#
-        data_list = cursor.execute(f"SELECT discord_id FROM groups WHERE guild_id='{guild.id}'").fetchall()
+        cursor.execute(f"SELECT discord_id FROM groups WHERE guild_id='{guild.id}'")
+        data_list = cursor.fetchall()
         for data in data_list:
             try:
                 data = data[0]
@@ -1085,7 +1137,8 @@ async def disconect(id):
                 print(f"error to remove: {role}, discord:{data} on {guild.name}")
         
         #project sync#
-        data_list = cursor.execute(f"SELECT discord_id FROM project WHERE guild_id='{guild.id}'").fetchall()
+        cursor.execute(f"SELECT discord_id FROM project WHERE guild_id='{guild.id}'")
+        data_list = cursor.fetchall()
         for data in data_list:
             try:
                 data = data[0]
@@ -1095,7 +1148,8 @@ async def disconect(id):
             except:
                 print(f"error to remove: {role}, discord:{data} on {guild.name}")
         #coa sync#
-        data_list = cursor.execute(f"SELECT discord_id FROM coa WHERE guild_id='{guild.id}'").fetchall()
+        cursor.execute(f"SELECT discord_id FROM coa WHERE guild_id='{guild.id}'")
+        data_list = cursor.fetchall()
         for data in data_list:
             try:
                 data = data[0]
@@ -1106,7 +1160,8 @@ async def disconect(id):
                 print(f"error to remove: {role}, discord:{data} on {guild.name}")
         
         #years sync#
-        data_list = cursor.execute(f"SELECT discord_id FROM years WHERE guild_id='{guild.id}'").fetchall()
+        cursor.execute(f"SELECT discord_id FROM years WHERE guild_id='{guild.id}'")
+        data_list = cursor.fetchall()
         for data in data_list:
             try:
                 data = data[0]
@@ -1118,20 +1173,26 @@ async def disconect(id):
 
 async def main():
     i = 1
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         return
-    number = int(cursor.execute(f"SELECT seq FROM sqlite_sequence WHERE name='users'").fetchone()[0])
-    if (not number):
+    cursor.execute(f"SELECT omega_id FROM users")
+    number = cursor.fetchall()
+    try:
+        number = int(number[-1])
+    except:
         await asyncio.sleep(5)
-        new = cursor.execute(f"SELECT discord_id,intra_id FROM new_users").fetchall()
+        cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
+        new = cursor.fetchall()
         for current in new:
                 id = current[0]
                 login = current[1]
 
                 cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
                 db.commit()
-                dobble_login = cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{login}'").fetchall()
+                cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{login}'")
+                dobble_login = cursor.fetchall()
                 for dobble in dobble_login:
                     if (dobble[0] != id):
                         await disconect(dobble[0])
@@ -1141,13 +1202,18 @@ async def main():
                 await update(login,id)
                 cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
                 db.commit()
+        return
     while (i <= number and maintenance == "off"):
-        maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'").fetchone()[0]
-        new = cursor.execute(f"SELECT discord_id,intra_id FROM new_users").fetchall()
+        cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
+        maintenance = cursor.fetchone()[0]
+        cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
+        new = cursor.fetchall()
         if (not new):
             try :
-                login = cursor.execute(f"SELECT intra_id FROM users WHERE omega_id='{i}'").fetchone()[0]
-                id = int(cursor.execute(f"SELECT discord_id FROM users WHERE omega_id='{i}'").fetchone()[0])
+                cursor.execute(f"SELECT intra_id FROM users WHERE omega_id='{i}'")
+                login = cursor.fetchone()[0]
+                cursor.execute(f"SELECT discord_id FROM users WHERE omega_id='{i}'")
+                id = int(cursor.fetchone()[0])
                 await update(login, id)
                 await asyncio.sleep(0.5)
 
@@ -1161,7 +1227,8 @@ async def main():
 
                 cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
                 db.commit()
-                dobble_login = cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{login}'").fetchall()
+                cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{login}'")
+                dobble_login = cursor.fetchall()
                 for dobble in dobble_login:
                     if (dobble[0] != id):
                         await disconect(dobble[0])
@@ -1176,18 +1243,21 @@ async def main():
 
 @tasks.loop(seconds=15)
 async def presence():
-    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='status'").fetchone()[0]
+    cursor.execute(f"SELECT status FROM maintenance WHERE part='status'")
+    maintenance = cursor.fetchone()[0]
     if maintenance == "on":
         game = Game(name="🚧 maintenance 🚧")
         await client.change_presence(status=Status.do_not_disturb, activity=game)
         return
-    status_list = cursor.execute(f"SELECT name FROM status").fetchall()
+    cursor.execute(f"SELECT name FROM status")
+    status_list = cursor.fetchall()
     if not status_list:
         game = Game(name="Someone else broke it")
         await client.change_presence(status=Status.idle, activity=game)
         return
     for status in status_list:
-        maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='status'").fetchone()[0]
+        cursor.execute(f"SELECT status FROM maintenance WHERE part='status'")
+        maintenance = cursor.fetchone()[0]
         if maintenance == "on":
             game = Game(name="🚧 maintenance 🚧")
             await client.change_presence(status=Status.do_not_disturb, activity=game)
@@ -1202,15 +1272,18 @@ async def on_ready():
     presence.start()
     while (client.get_guild(int(1084295027783639080)) != None):
         await main()
-        maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'").fetchone()[0]
+        cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
+        maintenance = cursor.fetchone()[0]
         while maintenance == "on":
             await asyncio.sleep(2)
-            maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'").fetchone()[0]
+            cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
+            maintenance = cursor.fetchone()[0]
     print("Unautorized bot version, please contact ngennaro (Gennaron#7378)")
     ngennaro = client.get_user(626861778030034945)
     if ngennaro != None:
         await ngennaro.send(f"Unautorized version of omega is runing as {client.user}")
-    module_list = cursor.execute(f"SELECT part,status FROM maintenance").fetchall()
+    cursor.execute(f"SELECT part,status FROM maintenance")
+    module_list = cursor.fetchall()
     for module in module_list:
         cursor.execute(f"UPDATE 'maintenance' SET status='on' WHERE part='{module[0]}'")
         db.commit()
