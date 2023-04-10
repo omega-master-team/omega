@@ -137,7 +137,7 @@ async def on_test_error(interaction: discord.Interaction, error: app_commands.Ap
 
 @tree.command(name = "ping", description = "send the bot ping")
 async def ping(interaction: Interaction):
-    maintenance = cursor.execute(f"SELECT status FROM 'maintenance' WHERE part='base'").fetchone()[0]
+    maintenance = cursor.execute(f"SELECT status FROM maintenance WHERE part='base'").fetchone()[0]
     if maintenance == "on":
         await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
         return
