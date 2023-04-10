@@ -50,7 +50,7 @@ class Router {
                 return call_user_func_array($match['target'], $match['params']);
             }
         } else {
-            View::generatePage(404, 'code 502');
+            View::generatePage(404, 'sorry ;)');
         }
     }
     public function generate($routeName, array $params = []) {
