@@ -89,6 +89,7 @@ services:
     volumes:
       - /etc/letsencrypt:/ssl:ro
       - /var/www/html:/webroot:ro
+      - /etc/ssl/certs/dhparam.pem:/dhparam.pem:ro
     ports:
       - 80:80
       - 443:443
