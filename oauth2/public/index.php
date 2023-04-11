@@ -2,7 +2,6 @@
 <?php
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
-use App\Model\Manager;
 use App\Router;
 
 // echo '<pre>';
