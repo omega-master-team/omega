@@ -86,6 +86,9 @@ services:
     depends_on:
       - pma
       - oauth2
+    volumes:
+      - /etc/letsencrypt:/ssl:ro
+      - /var/www/html:/webroot:ro
     ports:
       - 80:80
       - 443:443
