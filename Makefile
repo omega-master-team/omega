@@ -27,8 +27,8 @@ info:
 restart_service:
 	${cmd} up -d --build ${arg}
 
-# reset_php:
-# 	rm -rf ./oauth2/vendor
+reset_php:
+	rm -rf ./oauth2/vendor
 
 # reset_db:
 # 	rm -rf ./mariadb/volume
