@@ -681,7 +681,7 @@ async def adm_maintenance(command, message):
             except:
                 await message.channel.send("mode missing...")
                 return
-            cursor.execute(f"UPDATE 'maintenance' SET status='{command[1]}' WHERE part='{module[0]}'")
+            cursor.execute(f"UPDATE maintenance SET status='{command[1]}' WHERE part='{module[0]}'")
             db.commit()
         await message.channel.send("Success...")
         return
@@ -695,7 +695,7 @@ async def adm_maintenance(command, message):
             except:
                 await message.channel.send("mode missing...")
                 return
-            cursor.execute(f"UPDATE 'maintenance' SET status='{command[1]}' WHERE part='{module[0]}'")
+            cursor.execute(f"UPDATE maintenance SET status='{command[1]}' WHERE part='{module[0]}'")
             db.commit()
             await message.channel.send("Success...")
             return
