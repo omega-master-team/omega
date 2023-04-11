@@ -5,29 +5,94 @@ services:
     build:
       context: omega
       dockerfile: Dockerfile
+    depends_on:
+      - mariadb
     hostname: protocole_omega
     container_name: protocole_omega
     restart: always
     env_file:
       - .env
-    volumes:
-      - ./omega/omega.db:/app/omega.db
+    networks:
+      - intern_db
 
-  oauth:
+  oauth2:
     build:
-      context: oauth
+      context: oauth2
       dockerfile: Dockerfile
-    hostname: oauth
-    container_name: oauth
+    depends_on:
+      - mariadb
+      - composer
+    hostname: oauth2
+    container_name: oauth2
     restart: always
+    volumes:
+      - ./oauth2/:/app:ro
     env_file:
       - .env
+    networks:
+      - intern_db
+      - intern_web
+
+  mariadb:
+    build:
+      context: ./mariadb
+      dockerfile: Dockerfile
+    restart: always
+    hostname: mariadb
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - ./omega/omega.db:/app/omega.db
-      - ./oauth:/app/oauth
-      - ./.cargo/registry:/root/.cargo/registry
-      #- file_privkey:/app/cert/privkey.pem:ro
-      #- file_fullchain:/app/cert/fullchain.pem:ro
+      - "./mariadb/volume:/var/lib/mysql"
+    networks:
+      - intern_db
+
+  pma:
+    image: phpmyadmin:apache
+    restart: always
+    depends_on:
+      - mariadb
+    hostname: pma
+    container_name: pma
+    environment:
+      PMA_PORT: 3306
+      PMA_HOST: "mariadb"
+      PMA_PMADB: ${MYSQL_DATABASE}
+      PMA_ABSOLUTE_URI: ${DOMAIN}/phpmyadmin/
+    networks:
+      - intern_db
+      - intern_web
+  
+  composer:
+    build:
+      context: composer
+      dockerfile: Dockerfile
+    container_name: composer
+    hostname: composer
+    volumes:
+      - ./oauth2:/app
+    command: 'composer -W u'
+
+  nginx:
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    restart: always
+    container_name: nginx
+    hostname: nginx
+    depends_on:
+      - pma
+      - oauth2
     ports:
-      - "80:80"
-      #- "443:443"
+      - 80:80
+      - 443:443
+    networks:
+      - intern_web
+    
+
+networks:
+  intern_web:
+  intern_db:
