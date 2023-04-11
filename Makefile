@@ -2,7 +2,7 @@ COLOR_NORM		:=	\033[0m
 COLOR_RED		:=	\033[31m
 COLOR_PURPLE	:=	\033[35m
 cmd				:=	$(shell which docker-compose >/dev/null; RETVAL=$$?; if [ $$RETVAL -eq 0 ]; then echo 'docker-compose'; else echo 'docker compose'; fi)
-
+arg				:=	$(wordlist 2,2,$(MAKECMDGOALS))
 
 re-up: down up
 
@@ -23,6 +23,9 @@ fclean: clean
 
 info:
 	docker system df
+
+restart_service:
+	${cmd} up -d --build ${arg}
 
 # reset_db:
 # 	rm -rf ./mariadb/volume
