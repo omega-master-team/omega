@@ -27,11 +27,11 @@ info:
 restart_service:
 	${cmd} up -d --build ${arg}
 
-# reset_db:
-# 	rm -rf ./mariadb/volume
-
 # reset_php:
 # 	rm -rf ./oauth2/vendor
+
+# reset_db:
+# 	rm -rf ./mariadb/volume
 
 help:
 	@printf "make $(COLOR_PURPLE)re-up$(COLOR_NORM) [default]\n"
@@ -48,5 +48,11 @@ help:
 	@printf "\tdelete all images, volumes\n"
 	@printf "make $(COLOR_PURPLE)info$(COLOR_NORM)\n"
 	@printf "\tdisplay docker infos\n"
+	@printf "make $(COLOR_PURPLE)restart_service$(COLOR_NORM) $(COLOR_RED)<service_name>$(COLOR_NORM)\n"
+	@printf "\tupdate the service and all his dependences\n"
+	@printf "make $(COLOR_PURPLE)reset_php$(COLOR_NORM)\n"
+	@printf "\tremove all the php dependences\n"
+	@printf "make $(COLOR_RED)reset_db$(COLOR_NORM)\n"
+	@printf "\tremove all the data from the database $(COLOR_RED)only for dev$(COLOR_NORM)\n"
 	@printf "make $(COLOR_PURPLE)help$(COLOR_NORM)\n"
 	@printf "\tdisplay help\n"
