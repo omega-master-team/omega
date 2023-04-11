@@ -10,7 +10,6 @@ logs:
 	${cmd} logs --follow
 
 up:
-	mkdir -p .cargo
 	${cmd} up --build -d
 
 down:
@@ -18,14 +17,18 @@ down:
 
 clean: #down
 	docker builder prune --all
-#	rm -rf oauth/target # rm binaries
 
 fclean: clean
 	docker system prune -a -f --volumes
-#	rm -rf .cargo # rm downloads
 
 info:
 	docker system df
+
+# reset_db:
+# 	rm -rf ./mariadb/volume
+
+# reset_php:
+# 	rm -rf ./oauth2/vendor
 
 help:
 	@printf "make $(COLOR_PURPLE)re-up$(COLOR_NORM) [default]\n"
