@@ -1210,6 +1210,7 @@ async def main():
         maintenance = cursor.fetchone()[0]
         cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
         new = cursor.fetchall()
+        print(f"new:{new}")
         if (not new):
             try :
                 cursor.execute(f"SELECT intra_id FROM users WHERE omega_id='{i}'")
