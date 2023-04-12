@@ -1232,10 +1232,14 @@ async def main():
         new = cursor.fetchall()
         if (not len(new)):
             try :
+                print(i)
                 cursor.execute(f"SELECT intra_id FROM users WHERE omega_id='{i}'")
                 login = cursor.fetchone()[0]
                 cursor.execute(f"SELECT discord_id FROM users WHERE omega_id='{i}'")
                 id = int(cursor.fetchone()[0])
+                print(login)
+                print(id)
+                print("__")
                 await update(login, id)
                 await asyncio.sleep(0.5)
 
@@ -1243,7 +1247,6 @@ async def main():
                 await asyncio.sleep(0.15)
             i = i + 1
         else :
-            print(new)
             for current in new:
                 id = current[0]
                 login = current[1]
