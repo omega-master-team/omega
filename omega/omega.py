@@ -215,9 +215,9 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
-@tree.command(name = "nick", description = "set the nick parameters on the sever (&login and &campus works)")
+@tree.command(name = "nick", description = "set the nick parameters on the sever (32 chr is the max len for a nickname)")
 @app_commands.guild_only()
-@app_commands.describe(namming_pattern='the patern to aply (&login and &campus are a dynamic value)', campus_id='the campus needed')
+@app_commands.describe(namming_pattern='the patern to aply (&login, &campus , &display_name, &usual_name, &first_name, &wallet, &correction_point, &pool_month and &pool_years are a dynamic value)', campus_id='the campus needed')
 async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
     cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'")
     maintenance = cursor.fetchone()[0]
@@ -916,8 +916,18 @@ async def request(url) :
 async def update(login, id):
     user = await client.fetch_user(id)
     guild_list = user.mutual_guilds
-    #campus init#
     student = await request(f'users/{login}')
+    #base init#
+    display_name = student['displayname']
+    usual_name = student['usual_full_name']
+    first_name = student['usual_first_name']
+    if (not first_name):
+        first_name = student['first_name']
+    wallet = student['wallet']
+    correction_point = student['correction_point']
+    pool_month = student['pool_month']
+    pool_year = student['pool_year']
+    #campus init#
     campus_list = student['campus']
     campus_list_id = []
     campus_list_name = []
@@ -989,6 +999,13 @@ async def update(login, id):
             campus_id = data[0]
             name = data[1]
             name = name.replace("&login", login)
+            name = name.replace("&display_name", display_name)
+            name = name.replace("&usual_name", usual_name)
+            name = name.replace("&first_name", first_name)
+            name = name.replace("&wallet", wallet)
+            name = name.replace("&correction_point", correction_point)
+            name = name.replace("&pool_month", pool_month)
+            name = name.replace("&pool_year", pool_year)
             name = name.replace("&campus", ','.join(campus_list_name))
             if (campus_id in campus_list_id or campus_id == 0):
                 try:
