@@ -867,7 +867,10 @@ async def on_message(message):
 @client.event
 async def on_member_join(member):
     cursor.execute(f"SELECT omega_id FROM users WHERE discord_id='{member.id}'")
-    user = cursor.fetchone()[0]
+    try:
+        user = cursor.fetchone()[0]
+    except:
+        return
     if (not user):
         try :
             cursor.execute(f"SELECT status FROM maintenance WHERE part='login'")
