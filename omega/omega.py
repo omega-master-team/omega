@@ -1258,6 +1258,7 @@ async def main():
         i = i + 1
         cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
         maintenance = cursor.fetchone()[0]
+        db.commit()
 
 ##################################################setup discord and call token##################################################################
 
