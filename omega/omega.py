@@ -1231,6 +1231,7 @@ async def main():
                 cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
                 db.commit()
         print("inter")
+        new = None
         try :
             print(i)
             cursor.execute(f"SELECT intra_id FROM users WHERE omega_id='{i}'")
