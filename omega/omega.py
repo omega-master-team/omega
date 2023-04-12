@@ -1182,7 +1182,10 @@ async def main():
     cursor.execute(f"SELECT omega_id FROM users")
     number = cursor.fetchall()
     try:
-        number = int(number[-1])
+        final = 0
+        for current in number:
+            final = current
+        number = final[0]
     except:
         await asyncio.sleep(5)
         cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
@@ -1210,7 +1213,6 @@ async def main():
         maintenance = cursor.fetchone()[0]
         cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
         new = cursor.fetchall()
-        print(f"new:{new}")
         if (not new):
             try :
                 cursor.execute(f"SELECT intra_id FROM users WHERE omega_id='{i}'")
