@@ -1206,10 +1206,9 @@ async def main():
         number = final[0]
     except:
         number = 0
-    new_add()
+    await new_add()
     while (i <= number and maintenance == "off"):
-        
-        new_add()
+        await new_add()
         print("inter")
         try :
             print(i)
