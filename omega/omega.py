@@ -209,7 +209,7 @@ async def sync_project(interaction: Interaction, intra_id: int, in_progress: app
     if (not interaction.user.guild_permissions.administrator and level <= 2):
         await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
         return
-    cursor.execute("INSERT INTO project (campus_id, intra_id, in_progress, finished, validated, guild_id, discord_id) VALUES (%s, %s, %s, %s, %s, %s, %s)", (campus_id, intra_id, in_progress, finished, validated, interaction.guild_id, role_id))
+    cursor.execute("INSERT INTO project (campus_id, intra_id, in_progress, finished, validated, guild_id, discord_id) VALUES (%s, %s, %s, %s, %s, %s, %s)", (campus_id, intra_id, in_progress.value, finished.value, validated.value, interaction.guild_id, role_id))
     db.commit()
     await interaction.response.send_message(f"configuration successfully update", ephemeral = True, delete_after=2)
 
@@ -1213,7 +1213,7 @@ async def main():
         try:
             new = cursor.fetchone()
         except:
-            new = 0
+            new = 1
         db.commit()
         print("new,")
         print(new)
