@@ -1210,7 +1210,9 @@ async def main():
     while (i <= number and maintenance == "off"):
         cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
         new = cursor.fetchall()
+        print(new)
         for current in new:
+                print(current)
                 id = current[0]
                 login = current[1]
 
