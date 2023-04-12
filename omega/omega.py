@@ -1215,8 +1215,6 @@ async def main():
         except:
             new = 1
         db.commit()
-        print("new,")
-        print(new)
         while new:
             id = new[0]
             login = new[1]
@@ -1239,20 +1237,13 @@ async def main():
             except:
                 new = 0
             db.commit()
-        print("inter")
-
         try :
-            print(i)
             cursor.execute(f"SELECT intra_id FROM users WHERE omega_id='{i}'")
             login = cursor.fetchone()[0]
             cursor.execute(f"SELECT discord_id FROM users WHERE omega_id='{i}'")
             id = int(cursor.fetchone()[0])
-            print(login)
-            print(id)
             await update(login, id)
-            print("done\n_______")
             await asyncio.sleep(0.5)
-
         except :
             print("")
         i = i + 1
