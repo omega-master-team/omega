@@ -1238,15 +1238,13 @@ async def main():
             print(id)
             await update(login, id)
             print("done\n_______")
-            i = i + 1
             await asyncio.sleep(0.5)
 
         except :
-            i = i + 1
-        
+            print("")
+        i = i + 1
         cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
         maintenance = cursor.fetchone()[0]
-
 
 ##################################################setup discord and call token##################################################################
 
