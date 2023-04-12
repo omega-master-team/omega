@@ -1210,6 +1210,7 @@ async def main():
     while (i <= number and maintenance == "off"):
         cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
         new = cursor.fetchall()
+        print("new,")
         print(new)
         for current in new:
                 print(current)
@@ -1229,7 +1230,7 @@ async def main():
                 await update(login,id)
                 cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
                 db.commit()
-        
+        print("inter")
         try :
             print(i)
             cursor.execute(f"SELECT intra_id FROM users WHERE omega_id='{i}'")
