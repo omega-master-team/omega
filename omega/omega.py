@@ -1206,9 +1206,32 @@ async def main():
         number = final[0]
     except:
         number = 0
-    await new_add()
+    
     while (i <= number and maintenance == "off"):
-        await new_add()
+    
+        cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
+        new = cursor.fetchall()
+        print("new,")
+        print(new)
+        for current in new:
+                print(current)
+                id = current[0]
+                login = current[1]
+
+                cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
+                db.commit()
+                cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{login}'")
+                dobble_login = cursor.fetchall()
+                for dobble in dobble_login:
+                    if (dobble[0] != id):
+                        await disconect(dobble[0])
+                cursor.execute(f"DELETE FROM users WHERE intra_id='{login}'")
+                cursor.execute(f"DELETE FROM new_users WHERE discord_id={id} and intra_id='{login}'")
+                db.commit()
+                await update(login,id)
+                cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
+                db.commit()
+                await asyncio.sleep(0.5)
         print("inter")
         try :
             print(i)
@@ -1227,30 +1250,6 @@ async def main():
         i = i + 1
         cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
         maintenance = cursor.fetchone()[0]
-
-async def new_add():
-    cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
-    new = cursor.fetchall()
-    print("new,")
-    print(new)
-    for current in new:
-        print(current)
-        id = current[0]
-        login = current[1]
-        cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
-        db.commit()
-        cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{login}'")
-        dobble_login = cursor.fetchall()
-        for dobble in dobble_login:
-            if (dobble[0] != id):
-                await disconect(dobble[0])
-        cursor.execute(f"DELETE FROM users WHERE intra_id='{login}'")
-        cursor.execute(f"DELETE FROM new_users WHERE discord_id={id} and intra_id='{login}'")
-        db.commit()
-        await update(login,id)
-        cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
-        db.commit()
-        await asyncio.sleep(0.5)
 
 ##################################################setup discord and call token##################################################################
 
