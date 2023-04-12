@@ -14,4 +14,4 @@ WORKDIR /app
 COPY . .
 
 # Runtime
-CMD python3 omega.py
+CMD python3 -u omega.py

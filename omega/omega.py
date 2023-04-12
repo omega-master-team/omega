@@ -870,7 +870,7 @@ async def on_member_join(member):
     try:
         user = cursor.fetchone()[0]
     except:
-        return
+        user = 0
     if (not user):
         try :
             cursor.execute(f"SELECT status FROM maintenance WHERE part='login'")
