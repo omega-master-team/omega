@@ -1239,8 +1239,8 @@ async def main():
                 id = int(cursor.fetchone()[0])
                 print(login)
                 print(id)
-                print("__")
                 await update(login, id)
+                print("done\n_______")
                 await asyncio.sleep(0.5)
 
             except :
@@ -1250,6 +1250,7 @@ async def main():
             for current in new:
                 id = current[0]
                 login = current[1]
+                print(f"new, id:{id}, login{login}")
 
                 cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
                 db.commit()
