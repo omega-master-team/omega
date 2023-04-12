@@ -1211,7 +1211,7 @@ async def main():
     
         cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
         try:
-            new = cursor.fechone()
+            new = cursor.fetchone()
         except:
             new = 0
         print("new,")
@@ -1236,7 +1236,7 @@ async def main():
             db.commit()
             await asyncio.sleep(0.5)
             try:
-                new = cursor.fechone()
+                new = cursor.fetchone()
             except:
                 new = 0
         print("inter")
