@@ -1002,10 +1002,10 @@ async def update(login, id):
             name = name.replace("&display_name", display_name)
             name = name.replace("&usual_name", usual_name)
             name = name.replace("&first_name", first_name)
-            name = name.replace("&wallet", wallet)
-            name = name.replace("&correction_point", correction_point)
+            name = name.replace("&wallet", str(wallet))
+            name = name.replace("&correction_point", str(correction_point))
             name = name.replace("&pool_month", pool_month)
-            name = name.replace("&pool_year", pool_year)
+            name = name.replace("&pool_year", str(pool_year))
             name = name.replace("&campus", ','.join(campus_list_name))
             if (campus_id in campus_list_id or campus_id == 0):
                 try:
