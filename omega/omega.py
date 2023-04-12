@@ -1210,29 +1210,35 @@ async def main():
     while (i <= number and maintenance == "off"):
     
         cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
-        new = cursor.fechone()
+        try:
+            new = cursor.fechone()
+        except:
+            new = 0
         print("new,")
         print(new)
         while new:
-                print(current)
-                id = current[0]
-                login = current[1]
+            print(current)
+            id = current[0]
+            login = current[1]
 
-                cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
-                db.commit()
-                cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{login}'")
-                dobble_login = cursor.fetchall()
-                for dobble in dobble_login:
-                    if (dobble[0] != id):
-                        await disconect(dobble[0])
-                cursor.execute(f"DELETE FROM users WHERE intra_id='{login}'")
-                cursor.execute(f"DELETE FROM new_users WHERE discord_id={id} and intra_id='{login}'")
-                db.commit()
-                await update(login,id)
-                cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
-                db.commit()
-                await asyncio.sleep(0.5)
+            cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
+            db.commit()
+            cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{login}'")
+            dobble_login = cursor.fetchall()
+            for dobble in dobble_login:
+                if (dobble[0] != id):
+                    await disconect(dobble[0])
+            cursor.execute(f"DELETE FROM users WHERE intra_id='{login}'")
+            cursor.execute(f"DELETE FROM new_users WHERE discord_id={id} and intra_id='{login}'")
+            db.commit()
+            await update(login,id)
+            cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
+            db.commit()
+            await asyncio.sleep(0.5)
+            try:
                 new = cursor.fechone()
+            except:
+                new = 0
         print("inter")
         try :
             print(i)
