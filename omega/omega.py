@@ -1217,10 +1217,8 @@ async def main():
         print("new,")
         print(new)
         while new:
-            print(current)
-            id = current[0]
-            login = current[1]
-
+            id = new[0]
+            login = new[1]
             cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
             db.commit()
             cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{login}'")
