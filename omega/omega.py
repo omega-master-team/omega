@@ -1214,6 +1214,7 @@ async def main():
             new = cursor.fetchone()
         except:
             new = 0
+        db.commit()
         print("new,")
         print(new)
         while new:
