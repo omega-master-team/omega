@@ -1238,6 +1238,7 @@ async def main():
                 new = cursor.fetchone()
             except:
                 new = 0
+            db.commit()
         print("inter")
 
         try :
