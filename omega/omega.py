@@ -28,12 +28,12 @@ while (connected != True):
           password=os.getenv('MYSQL_PASSWORD'),
           database=os.getenv('MYSQL_DATABASE')
         )
-        db.autocommit(True)
         connected = True
     except:
         print("Db connection failed, retry in 5 seconds...")
         time.sleep(5)
 cursor = db.cursor(buffered=True)
+db.autocommit(True)
 
 intents = Intents.default()
 intents.members = True
