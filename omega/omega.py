@@ -33,7 +33,6 @@ while (connected != True):
         print("Db connection failed, retry in 5 seconds...")
         time.sleep(5)
 cursor = db.cursor(buffered=True)
-db.autocommit(True)
 
 intents = Intents.default()
 intents.members = True
