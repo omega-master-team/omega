@@ -1243,6 +1243,7 @@ async def main():
                 await asyncio.sleep(0.15)
             i = i + 1
         else :
+            print(new)
             for current in new:
                 id = current[0]
                 login = current[1]
