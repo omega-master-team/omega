@@ -1210,10 +1210,10 @@ async def main():
     while (i <= number and maintenance == "off"):
     
         cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
-        new = cursor.fetchall()
+        new = cursor.fechone()
         print("new,")
         print(new)
-        for current in new:
+        while new:
                 print(current)
                 id = current[0]
                 login = current[1]
@@ -1232,6 +1232,7 @@ async def main():
                 cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
                 db.commit()
                 await asyncio.sleep(0.5)
+                new = cursor.fechone()
         print("inter")
         try :
             print(i)
