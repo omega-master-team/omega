@@ -8,8 +8,8 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - mariadb
-    hostname: protocole_omega
-    container_name: protocole_omega
+    hostname: omega
+    container_name: omega
     restart: always
     env_file:
       - .env
