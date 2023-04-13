@@ -6,13 +6,13 @@ arg				:=	$(wordlist 2,2,$(MAKECMDGOALS))
 
 # Inclut le fichier .env s'il existe
 ifneq ("$(wildcard .env)","")
-    include .env
+	include .env
 endif
 
 ifeq ($(MODE),PROD)
-    cmd += -f docker-compose.yml
+	cmd += -f docker-compose.yml
 else
-    cmd += -f dev.docker-compose.yml
+	cmd += -f dev.docker-compose.yml
 endif
 
 ############################################################
@@ -59,7 +59,13 @@ reset_php:
 
 ifneq ($(MODE),PROD)
 reset_db:
-	rm -rf ./mariadb/volume
+	@confirm=n;read -p "Erase database ? (y/n) " confirm; \
+	if [ $$confirm = y ]; then \
+		rm -rf ./mariadb/volume; \
+		echo "Database erase."; \
+	else \
+		echo "Cancel."; \
+	fi
 endif
 
 
@@ -71,6 +77,7 @@ help:
 	@printf "make $(COLOR_PURPLE)log$(COLOR_NORM) $(COLOR_RED)<service_name>$(COLOR_NORM)\n"
 	@printf "\tdisplay log of service $(COLOR_RED)service_name$(COLOR_NORM)\n"
 	@printf "make $(COLOR_PURPLE)reset_php$(COLOR_NORM)\n"
+	@printf "\trm php dependencies\n"
 	@printf "make $(COLOR_PURPLE)up$(COLOR_NORM)\n"
 	@printf "\tup dockers\n"
 	@printf "make $(COLOR_PURPLE)down$(COLOR_NORM)\n"
