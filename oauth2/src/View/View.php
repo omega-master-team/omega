@@ -30,6 +30,7 @@ class View {
 		?>
 		<div class="page">
 			<p class="error"><?= $state . ' ' . $pageErrorPos ?></p>
+			<script src="/script.js"></script>
 		</div>
 		<?php
 		return ob_get_clean();
