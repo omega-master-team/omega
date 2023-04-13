@@ -71,6 +71,7 @@ help:
 	@printf "make $(COLOR_PURPLE)log$(COLOR_NORM) $(COLOR_RED)<service_name>$(COLOR_NORM)\n"
 	@printf "\tdisplay log of service $(COLOR_RED)service_name$(COLOR_NORM)\n"
 	@printf "make $(COLOR_PURPLE)reset_php$(COLOR_NORM)\n"
+	@printf "\trm php dependencies\n"
 	@printf "make $(COLOR_PURPLE)up$(COLOR_NORM)\n"
 	@printf "\tup dockers\n"
 	@printf "make $(COLOR_PURPLE)down$(COLOR_NORM)\n"
