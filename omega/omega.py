@@ -237,6 +237,44 @@ async def nick(interaction: Interaction,namming_pattern: str, campus_id: int=0):
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
+@tree.command(name = "config", description = "Send the current server configuration")
+@app_commands.guild_only()
+async def config_list(interaction: Interaction):
+	cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'")
+	maintenance = cursor.fetchone()[0]
+	if maintenance == "on":
+		await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+		return
+	level = admin_check(interaction.user.id)
+	if (not interaction.user.guild_permissions.administrator and level <= 2):
+		await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
+		return
+	
+	msg = "```You have currently this configuration\n(the first two parameters are discord_role|intra_id)```\n"
+	msg = f"{msg}``-> nick <-``\n"
+	cursor.execute(f"SELECT campus_id,format FROM nick WHERE guild_id={interaction.guild_id}")
+	nick_list = cursor.fetchall()
+	for nick in nick_list:
+		msg = f"{msg}{nick[1]}, campus_id: {nick[0]}\n"
+	msg = f"{msg}\n"
+	items = ["cursus", "coa", "groups", "years"]
+	for item in items:
+		msg = msg + f"``-> {item} <-``\n"
+		cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM {item} WHERE guild_id={interaction.guild_id}")
+		sub_item_list = cursor.fetchall()
+		for sub_item in sub_item_list:
+			msg = f"{msg}<@&{sub_item[2]}> | {sub_item[1]}, campus_id: {sub_item[0]}\n"
+		msg = f"{msg}\n"
+	msg = f"\n{msg}``-> project <-``\n"
+	cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id={interaction.guild_id}")
+	project_list = cursor.fetchall()
+	for project in project_list:
+		msg = f"{msg}<@&{sub_item[2]}> | {sub_item[1]}, campus_id: {project[0]}, in_progess: {project[3]}, finished: {project[4]}, validated: {project[5]}\n"
+	msg = f"{msg}\n```by Protocole Omega```"
+	await interaction.response.send_message(msg, ephemeral=True)
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
+
 @tree.command(name = "nick_reset", description = "reset the nick parameters on the sever")
 @app_commands.guild_only()
 async def nick_reset(interaction: Interaction):
