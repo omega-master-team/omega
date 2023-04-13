@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # omega (bot discord)
   omega:
     build:
       context: omega
@@ -12,9 +13,13 @@ services:
     restart: always
     env_file:
       - .env
+    volumes:
+      - ./omega:/app:ro
+    command: python3 -u omega.py
     networks:
       - intern_db
 
+  # site for oauth
   oauth2:
     build:
       context: oauth2
@@ -33,6 +38,7 @@ services:
       - intern_db
       - intern_web
 
+  # mariadb database
   mariadb:
     build:
       context: ./mariadb
@@ -50,6 +56,7 @@ services:
     networks:
       - intern_db
 
+  # phpmyadmin
   pma:
     image: phpmyadmin:apache
     restart: always
@@ -66,6 +73,7 @@ services:
       - intern_db
       - intern_web
   
+  # Service run at start to generate php dependencies
   composer:
     build:
       context: composer
@@ -76,19 +84,20 @@ services:
       - ./oauth2:/app
     command: 'composer -W u'
 
+  # web service (proxy + ssl cert)
   nginx:
-    build:
-      context: nginx
-      dockerfile: Dockerfile
+    image: nginx:alpine
     restart: always
     container_name: nginx
     hostname: nginx
     depends_on:
       - pma
       - oauth2
+    volumes:
+      # config nginx
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - 80:80
-      - 443:443
     networks:
       - intern_web
     

@@ -13,6 +13,9 @@ services:
     restart: always
     env_file:
       - .env
+    volumes:
+      - ./omega:/app:ro
+    command: python3 omega.py
     networks:
       - intern_db
 
@@ -83,9 +86,7 @@ services:
 
   # web service (proxy + ssl cert)
   nginx:
-    build:
-      context: nginx
-      dockerfile: Dockerfile
+    image: nginx:alpine
     restart: always
     container_name: nginx
     hostname: nginx
@@ -93,6 +94,8 @@ services:
       - pma
       - oauth2
     volumes:
+      # config nginx
+      - ./nginx/conf/prod.conf:/etc/nginx/nginx.conf:ro
       # directory of certificates
       - /etc/letsencrypt:/ssl:ro
       # directory of the webroot (update cert - certbot)

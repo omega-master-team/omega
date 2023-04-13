@@ -4,6 +4,25 @@ COLOR_PURPLE	:=	\033[35m
 cmd				:=	$(shell which docker-compose >/dev/null; RETVAL=$$?; if [ $$RETVAL -eq 0 ]; then echo 'docker-compose'; else echo 'docker compose'; fi)
 arg				:=	$(wordlist 2,2,$(MAKECMDGOALS))
 
+# Inclut le fichier .env s'il existe
+ifneq ("$(wildcard .env)","")
+    include .env
+endif
+
+ifeq ($(MODE),PROD)
+    cmd += -f docker-compose.yml
+else
+    cmd += -f dev.docker-compose.yml
+endif
+
+############################################################
+##                      Rules                             ##
+############################################################
+
+
+# mode:
+# 	@echo "$(cmd)"
+
 re-up: down up
 
 logs:
@@ -29,14 +48,20 @@ fclean: clean
 info:
 	docker system df
 
-restart_service:
+rebuild_service:
 	${cmd} up -d --build ${arg}
+
+restart_service:
+	${cmd} restart ${arg}
 
 reset_php:
 	rm -rf ./oauth2/vendor
 
-# reset_db:
-# 	rm -rf ./mariadb/volume
+ifneq ($(MODE),PROD)
+reset_db:
+	rm -rf ./mariadb/volume
+endif
+
 
 help:
 	@printf "make $(COLOR_PURPLE)re-up$(COLOR_NORM) [default]\n"
@@ -56,8 +81,10 @@ help:
 	@printf "\tdelete all images, volumes\n"
 	@printf "make $(COLOR_PURPLE)info$(COLOR_NORM)\n"
 	@printf "\tdisplay docker infos\n"
-	@printf "make $(COLOR_PURPLE)restart_service$(COLOR_NORM) $(COLOR_RED)<service_name>$(COLOR_NORM)\n"
+	@printf "make $(COLOR_PURPLE)rebuild_service$(COLOR_NORM) $(COLOR_RED)<service_name>$(COLOR_NORM)\n"
 	@printf "\tupdate the service and all his dependences\n"
+	@printf "make $(COLOR_PURPLE)restart_service$(COLOR_NORM) $(COLOR_RED)<service_name>$(COLOR_NORM)\n"
+	@printf "\trestart the service and all his dependences\n"
 	@printf "make $(COLOR_PURPLE)reset_php$(COLOR_NORM)\n"
 	@printf "\tremove all the php dependences\n"
 	@printf "make $(COLOR_RED)reset_db$(COLOR_NORM)\n"

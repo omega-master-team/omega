@@ -1,10 +1,10 @@
 FROM debian:bullseye-slim
 
 RUN \
-    apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y php-cli libzip-dev php-mysql php-curl \
-    && apt-get clean
+	apt-get update \
+	&& apt-get upgrade -y \
+	&& apt-get install -y php-cli libzip-dev php-mysql php-curl \
+	&& apt-get clean
 
 WORKDIR /app
 
