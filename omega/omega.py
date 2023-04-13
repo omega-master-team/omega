@@ -1206,7 +1206,7 @@ async def main():
         number = final[0]
     except:
         number = 0
-    
+
     while (i <= number and maintenance == "off"):
     
         cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
@@ -1245,11 +1245,13 @@ async def main():
             await update(login, id)
             await asyncio.sleep(0.5)
         except :
-            print("")
+            a = 1
         i = i + 1
         cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
         maintenance = cursor.fetchone()[0]
         db.commit()
+    if number == 0:
+        await asyncio.sleep(5)
 
 ##################################################setup discord and call token##################################################################
 
