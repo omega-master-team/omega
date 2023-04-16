@@ -118,7 +118,7 @@ async def sign_up(interaction: Interaction):
 	cursor.execute(f"DELETE FROM temp_auth WHERE discord_id={interaction.user.id}")
 	cursor.execute(f"INSERT INTO temp_auth (discord_id, code) VALUES ({interaction.user.id},'{uid}')")
 	db.commit()
-	await interaction.response.send_message(f"Merci de suivre la procedure ci dessous\n{redirect}{uid}", ephemeral = True, delete_after=30)
+	await interaction.response.send_message(f"Please follow the procedure below\n{redirect}{uid}", ephemeral = True, delete_after=30)
 
 @sign_up.error
 async def on_test_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
