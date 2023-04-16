@@ -517,11 +517,11 @@ async def stats(message):
 	await wait.delete()
 
 async def admin_config(command, message):
-	guild = client.fetch_guild(int(command))
+	guild = await client.fetch_guild(int(command))
 	if not guild:
 		await message.channel.send("this guild does not exist")
 		return
-	msg = f"```{guild} have currently this configuration\n(the first two parameters are discord_role|intra_id)```\n"
+	msg = f"```{guild.name} have currently this configuration\n(the first two parameters are discord_role|intra_id)```\n"
 	msg = f"{msg}``-> nick <-``\n"
 	cursor.execute(f"SELECT campus_id,format FROM nick WHERE guild_id={command}")
 	nick_list = cursor.fetchall()
@@ -534,13 +534,15 @@ async def admin_config(command, message):
 		cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM {item} WHERE guild_id={command}")
 		sub_item_list = cursor.fetchall()
 		for sub_item in sub_item_list:
-			msg = f"{msg}<@&{sub_item[2]}> | {sub_item[1]}, campus_id: {sub_item[0]}\n"
+			role = guild.get_role(sub_item[2])
+			msg = f"{msg}{role} | {sub_item[1]}, campus_id: {sub_item[0]}\n"
 		msg = f"{msg}\n"
 	msg = f"\n{msg}``-> project <-``\n"
 	cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id={command}")
 	project_list = cursor.fetchall()
 	for project in project_list:
-		msg = f"{msg}<@&{sub_item[2]}> | {sub_item[1]}, campus_id: {project[0]}, in_progess: {project[3]}, finished: {project[4]}, validated: {project[5]}\n"
+		role = guild.get_role(sub_item[2])
+		msg = f"{msg}{role} | {sub_item[1]}, campus_id: {project[0]}, in_progess: {project[3]}, finished: {project[4]}, validated: {project[5]}\n"
 	await message.channel.send(msg)
 
 async def send(command, message):
