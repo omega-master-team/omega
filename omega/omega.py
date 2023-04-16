@@ -470,6 +470,7 @@ async def help(message):
 		if utils != "on":
 			embed.add_field(name = "join", value = f"genere une invitation vers le serveur", inline = False)
 			embed.add_field(name = "list", value = f"envoie la liste des serveur du bot", inline = False)
+			embed.add_field(name = "config", value = f"envoie la configuration de ce serveur", inline = False)
 	if level >= 2:
 		if utils != "on":
 			embed.add_field(name = "send", value = f"envoie un mp avec le bot", inline = False)
@@ -514,6 +515,33 @@ async def stats(message):
 	embed.add_field(name = "__Years__", value = f"{years_count}", inline = True)
 	await message.channel.send(embed=embed)
 	await wait.delete()
+
+async def admin_config(command, message):
+	guild = client.fetch_guild(int(command))
+	if not guild:
+		await message.channel.send("this guild does not exist")
+		return
+	msg = f"```{guild} have currently this configuration\n(the first two parameters are discord_role|intra_id)```\n"
+	msg = f"{msg}``-> nick <-``\n"
+	cursor.execute(f"SELECT campus_id,format FROM nick WHERE guild_id={command}")
+	nick_list = cursor.fetchall()
+	for nick in nick_list:
+		msg = f"{msg}{nick[1]}, campus_id: {nick[0]}\n"
+	msg = f"{msg}\n"
+	items = ["cursus", "coa", "groups", "years"]
+	for item in items:
+		msg = msg + f"``-> {item} <-``\n"
+		cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM {item} WHERE guild_id={interaction.guild_id}")
+		sub_item_list = cursor.fetchall()
+		for sub_item in sub_item_list:
+			msg = f"{msg}<@&{sub_item[2]}> | {sub_item[1]}, campus_id: {sub_item[0]}\n"
+		msg = f"{msg}\n"
+	msg = f"\n{msg}``-> project <-``\n"
+	cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id={interaction.guild_id}")
+	project_list = cursor.fetchall()
+	for project in project_list:
+		msg = f"{msg}<@&{sub_item[2]}> | {sub_item[1]}, campus_id: {project[0]}, in_progess: {project[3]}, finished: {project[4]}, validated: {project[5]}\n"
+	await message.channel.send(msg)
 
 async def send(command, message):
 	command = command.split(" ")
@@ -661,6 +689,9 @@ async def list(message):
 
 async def admin_join(command, message):
 	guild = await client.fetch_guild(int(command))
+	if not guild:
+		await message.channel.send("this guild does not exist")
+		return
 	channel = await guild.fetch_channels()
 	for current in channel:
 		try:
@@ -793,6 +824,11 @@ async def on_message(message):
 					await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
 					return
 				await admin_join(mp[5:], message)
+			elif mp[:6] == "config" and level >= 3:
+				if utils == "on":
+					await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
+					return
+				await admin_config(mp[7:], message)
 			elif mp[:5] == "leave" and level >= 4:
 				if utils == "on":
 					await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
