@@ -531,13 +531,13 @@ async def admin_config(command, message):
 	items = ["cursus", "coa", "groups", "years"]
 	for item in items:
 		msg = msg + f"``-> {item} <-``\n"
-		cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM {item} WHERE guild_id={interaction.guild_id}")
+		cursor.execute(f"SELECT campus_id,intra_id,discord_id FROM {item} WHERE guild_id={command}")
 		sub_item_list = cursor.fetchall()
 		for sub_item in sub_item_list:
 			msg = f"{msg}<@&{sub_item[2]}> | {sub_item[1]}, campus_id: {sub_item[0]}\n"
 		msg = f"{msg}\n"
 	msg = f"\n{msg}``-> project <-``\n"
-	cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id={interaction.guild_id}")
+	cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id={command}")
 	project_list = cursor.fetchall()
 	for project in project_list:
 		msg = f"{msg}<@&{sub_item[2]}> | {sub_item[1]}, campus_id: {project[0]}, in_progess: {project[3]}, finished: {project[4]}, validated: {project[5]}\n"
