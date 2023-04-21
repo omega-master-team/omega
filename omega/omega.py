@@ -541,8 +541,8 @@ async def admin_config(command, message):
 	cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id={command}")
 	project_list = cursor.fetchall()
 	for project in project_list:
-		role = guild.get_role(sub_item[2])
-		msg = f"{msg}{role} | {sub_item[1]}, campus_id: {project[0]}, in_progess: {project[3]}, finished: {project[4]}, validated: {project[5]}\n"
+		role = guild.get_role(project[2])
+		msg = f"{msg}{role} | {project[1]}, campus_id: {project[0]}, in_progess: {project[3]}, finished: {project[4]}, validated: {project[5]}\n"
 	await message.channel.send(msg)
 
 async def send(command, message):
