@@ -269,7 +269,7 @@ async def config_list(interaction: Interaction):
 	cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id={interaction.guild_id}")
 	project_list = cursor.fetchall()
 	for project in project_list:
-		msg = f"{msg}<@&{sub_item[2]}> | {sub_item[1]}, campus_id: {project[0]}, in_progess: {project[3]}, finished: {project[4]}, validated: {project[5]}\n"
+		msg = f"{msg}<@&{project[2]}> | {project[1]}, campus_id: {project[0]}, in_progess: {project[3]}, finished: {project[4]}, validated: {project[5]}\n"
 	msg = f"{msg}\n```by Protocole Omega```"
 	await interaction.response.send_message(msg, ephemeral=True)
 
