@@ -875,7 +875,7 @@ async def on_message(message):
 			cursor.execute(f"SELECT channel_id FROM ticket WHERE user_id={message.author.id}")
 			channel = cursor.fetchall()
 			if (not channel):
-				embed = Embed(title = f"open a Ticket", description=f"Your a in proccess to create a ticket with the Omega staff\ndo you want to submit it ?", color=Colour.green())
+				embed = Embed(title = f"Open a support Ticket", description=f"Your a in proccess to create a ticket with the Omega staff\ndo you want to submit it ? \n(Warning the ticket is ony aviable for fix an issue withe *THE BOT*, we can't help you for the cursus or other issue related to 42)", color=Colour.green())
 
 				view = Verify(timeout=50)
 				await message.channel.send(embed=embed, view=view)
@@ -904,8 +904,11 @@ async def on_message(message):
 				channel = channel[0][0]
 				channel = await client.fetch_channel(channel)
 				await message.add_reaction('🚀')
-			avatar = await message.author.avatar.read()
-			hook = await channel.create_webhook(name=message.author.name, avatar=avatar)
+			try :
+				avatar = await message.author.avatar.read()
+				hook = await channel.create_webhook(name=message.author.name, avatar=avatar)
+			except :
+				hook = await channel.create_webhook(name=message.author.name)
 			if (message.content):
 				await hook.send(f"{message.content}")
 			if (message.attachments):
