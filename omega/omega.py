@@ -455,15 +455,15 @@ async def help(message):
 	cursor.execute(f"SELECT status FROM maintenance WHERE part='status'")
 	mstatus = cursor.fetchone()[0]
 	if level >= 5:
-		embed.add_field(name = "__lock__", value = f"manage maintenance mod", inline = False)
-	if level >= 4:
-		if sync != "on":
-			embed.add_field(name = "sync", value = f"syncronise un utilisateur avec omega", inline = False)
-			embed.add_field(name = "logout", value = f"déconecte un utilisateur", inline = False)
+		embed.add_field(name = "lock", value = f"manage maintenance mod", inline = False)
 		if mstatus != "on":
 			embed.add_field(name = "status", value = f"envoie les status du bot", inline = False)
 			embed.add_field(name = "play", value = f"set un status pour le bot", inline = False)
 			embed.add_field(name = "pause", value = f"retire un status du bot", inline = False)
+	if level >= 4:
+		if sync != "on":
+			embed.add_field(name = "sync", value = f"syncronise un utilisateur avec omega", inline = False)
+			embed.add_field(name = "logout", value = f"déconecte un utilisateur", inline = False)
 		if utils != "on":
 			embed.add_field(name = "leave", value = f"quitte un serveur", inline = False)
 	if level >= 3:
@@ -836,17 +836,17 @@ async def on_message(message):
 					await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
 					return
 				await srv_leave(mp[6:], message)
-			elif mp[:6] == "status" and level >= 4:
+			elif mp[:6] == "status" and level >= 5:
 				if mstatus == "on":
 					await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
 					return
 				await status(mp[7:], message)
-			elif mp[:4] == "play" and level >= 4:
+			elif mp[:4] == "play" and level >= 5:
 				if mstatus == "on":
 					await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
 					return
 				await new_status(mp[5:], message)
-			elif mp[:5] == "pause" and level >= 4:
+			elif mp[:5] == "pause" and level >= 5:
 				if mstatus == "on":
 					await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
 					return
