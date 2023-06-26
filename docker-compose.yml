@@ -90,12 +90,15 @@ services:
     restart: always
     container_name: nginx
     hostname: nginx
+    environment:
+      FQDN: ${FQDN}
+      INVIT_CODE: ${INVIT_CODE}
     depends_on:
       - pma
       - oauth2
     volumes:
       # config nginx
-      - ./nginx/conf/prod.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf/prod.conf:/etc/nginx/templates/default.conf.template:ro
       # directory of certificates
       - /etc/letsencrypt:/ssl:ro
       # directory of the webroot (update cert - certbot)
