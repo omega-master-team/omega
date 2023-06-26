@@ -886,17 +886,17 @@ async def on_message(message):
 					await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
 					return
 				await srv_leave(mp[6:], message)
-			elif mp[:6] == "status" and level >= 4:
+			elif mp[:6] == "status" and level >= 5:
 				if mstatus == "on":
 					await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
 					return
 				await status(mp[7:], message)
-			elif mp[:4] == "play" and level >= 4:
+			elif mp[:4] == "play" and level >= 5:
 				if mstatus == "on":
 					await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
 					return
 				await new_status(mp[5:], message)
-			elif mp[:5] == "pause" and level >= 4:
+			elif mp[:5] == "pause" and level >= 5:
 				if mstatus == "on":
 					await message.channel.send(f"🚧 Feature currently in maintenance 🚧")
 					return
