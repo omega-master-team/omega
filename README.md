@@ -83,6 +83,10 @@ Les commandes suivantes servent à la configuration des différentes options du 
 
 ![image](https://user-images.githubusercontent.com/73013583/217252464-bc7aa4cd-dd22-4c71-b4f5-1b1b11eb4601.png)
 
+### `/sync_piscine` : *Syncronisation des piscines*
+
+> Elle vous permettra d'attribuer un role a un utilisateur en fonction des dates de sa piscine.
+
 ### `/sync_project` : *Syncronisation des projets*
 
 > Elle vous permettra de définir son identifiant sur l'intranet
