@@ -45,6 +45,13 @@ CREATE TABLE IF NOT EXISTS project (
 	discord_id	BIGINT NOT NULL,
 	guild_id	BIGINT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS piscine (
+	campus_id	BIGINT NOT NULL,
+	pool_month	ENUM('january', 'febuary', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december') NOT NULL,
+	pool_year	BIGINT NOT NULL,
+	discord_id	BIGINT NOT NULL,
+	guild_id	BIGINT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS temp_auth (
 	discord_id	BIGINT NOT NULL,
 	code	TEXT NOT NULL

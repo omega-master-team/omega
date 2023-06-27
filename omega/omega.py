@@ -1,3 +1,4 @@
+import calendar
 import discord
 from discord import *
 from discord.ext import tasks
@@ -97,6 +98,7 @@ async def help(interaction: Interaction):
 	embed.add_field(name = "issue", value = f"for any issue mp the bot", inline = False)
 	embed.add_field(name = "___________", value = f"admin command", inline = False)
 	embed.add_field(name = "sync", value = f"set the config parameters on the sever", inline = False)
+	embed.add_field(name = "sync_piscine", value = f"set the piscine sync parameters on the sever", inline = False)
 	embed.add_field(name = "sync_project", value = f"set the project sync parameters on the sever", inline = False)
 	embed.add_field(name = "nick", value = f"set the nick parameters on the sever", inline = False)
 	embed.add_field(name = "delete", value = f"delete the config parameters on the sever", inline = False)
@@ -183,6 +185,40 @@ async def sync(interaction: Interaction,type: app_commands.Choice[int], intra_id
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
 
+@tree.command(name = "sync_piscine", description = "set the piscine sync parameters on the sever")
+@app_commands.guild_only()
+@app_commands.choices(pool_month=[
+	app_commands.Choice(name = 'January', value = 1),
+	app_commands.Choice(name = 'Febuary', value = 2),
+	app_commands.Choice(name = 'March', value = 3),
+	app_commands.Choice(name = 'April', value = 4),
+	app_commands.Choice(name = 'May', value = 5),
+	app_commands.Choice(name = 'June', value = 6),
+	app_commands.Choice(name = 'July', value = 7),
+	app_commands.Choice(name = 'August', value = 8),
+	app_commands.Choice(name = 'September', value = 9),
+	app_commands.Choice(name = 'October', value = 10),
+	app_commands.Choice(name = 'November', value = 11),
+	app_commands.Choice(name = 'December', value = 12),
+])
+@app_commands.describe(pool_month='the pool_month to sync with role', pool_year='the pool_year to sync with role', role='the role to give', campus_id='the campus needed')
+async def sync_project(interaction: Interaction, pool_month: app_commands.Choice[int], pool_year: int, role: discord.Role, campus_id: int=0):
+	cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_config'")
+	maintenance = cursor.fetchone()[0]
+	if maintenance == "on":
+		await interaction.response.send_message(f"🚧 Feature currently in maintenance 🚧", ephemeral = True, delete_after=5)
+		return
+	level = admin_check(interaction.user.id)
+	role_id = role.id
+	if (not interaction.user.guild_permissions.administrator and level <= 2):
+		await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
+		return
+	cursor.execute("INSERT INTO piscine (campus_id, pool_month, pool_year, guild_id, discord_id) VALUES (%s, %s, %s, %s, %s)", (campus_id, calendar.month_name[pool_month.value].lower(), pool_year, interaction.guild_id, role_id))
+	db.commit()
+	await interaction.response.send_message(f"configuration successfully update", ephemeral = True, delete_after=2)
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////#
+
 @tree.command(name = "sync_project", description = "set the project sync parameters on the sever")
 @app_commands.guild_only()
 @app_commands.choices(in_progress=[
@@ -251,12 +287,14 @@ async def config_list(interaction: Interaction):
 		return
 	
 	msg = "```You have currently this configuration\n(the first two parameters are discord_role|intra_id)```\n"
+
 	msg = f"{msg}``-> nick <-``\n"
 	cursor.execute(f"SELECT campus_id,format FROM nick WHERE guild_id={interaction.guild_id}")
 	nick_list = cursor.fetchall()
 	for nick in nick_list:
 		msg = f"{msg}{nick[1]}, campus_id: {nick[0]}\n"
 	msg = f"{msg}\n"
+
 	items = ["cursus", "coa", "groups", "years"]
 	for item in items:
 		msg = msg + f"``-> {item} <-``\n"
@@ -265,11 +303,19 @@ async def config_list(interaction: Interaction):
 		for sub_item in sub_item_list:
 			msg = f"{msg}<@&{sub_item[2]}> | {sub_item[1]}, campus_id: {sub_item[0]}\n"
 		msg = f"{msg}\n"
-	msg = f"\n{msg}``-> project <-``\n"
+
+	msg = f"\n{msg}``-> piscine <-``\n"
+	cursor.execute(f"SELECT campus_id,pool_month,pool_year,discord_id FROM piscine WHERE guild_id={interaction.guild_id}")
+	piscine_list = cursor.fetchall()
+	for piscine in piscine_list:
+		msg = f"{msg}<@&{piscine[3]}> | {piscine[1]} {piscine[2]}, campus_id: {piscine[0]}\n"
+
+	msg = f"\n{msg}\n``-> project <-``\n"
 	cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id={interaction.guild_id}")
 	project_list = cursor.fetchall()
 	for project in project_list:
 		msg = f"{msg}<@&{project[2]}> | {project[1]}, campus_id: {project[0]}, in_progess: {project[3]}, finished: {project[4]}, validated: {project[5]}\n"
+
 	msg = f"{msg}\n```by Protocole Omega```"
 	await interaction.response.send_message(msg, ephemeral=True)
 
@@ -301,6 +347,7 @@ async def nick_reset(interaction: Interaction):
 	app_commands.Choice(name = 'project', value = 3),
 	app_commands.Choice(name = 'coa', value = 4),
 	app_commands.Choice(name = 'years', value = 5),
+	app_commands.Choice(name = 'piscine', value = 6),
 ])
 @app_commands.choices(id_from=[
 	app_commands.Choice(name = 'intra_id', value = 1),
@@ -489,6 +536,8 @@ async def stats(message):
 	cursus_count = len(cursor.fetchall())
 	cursor.execute(f"SELECT campus_id FROM coa")
 	coalition_count = len(cursor.fetchall())
+	cursor.execute(f"SELECT campus_id FROM piscine")
+	piscine_count = len(cursor.fetchall())
 	cursor.execute(f"SELECT campus_id FROM project")
 	project_count = len(cursor.fetchall())
 	cursor.execute(f"SELECT campus_id FROM groups")
@@ -510,6 +559,7 @@ async def stats(message):
 	embed.add_field(name = "__Nick__", value = f"{nick_count}", inline = True)
 	embed.add_field(name = "__Cursus__", value = f"{cursus_count}", inline = True)
 	embed.add_field(name = "__COA__", value = f"{coalition_count}", inline = True)
+	embed.add_field(name = "__Piscine__", value = f"{piscine_count}", inline = True)
 	embed.add_field(name = "__Project__", value = f"{project_count}", inline = True)
 	embed.add_field(name = "__Groups__", value = f"{groups_count}", inline = True)
 	embed.add_field(name = "__Years__", value = f"{years_count}", inline = True)
@@ -1040,6 +1090,10 @@ async def update(login, id):
 	student_groups_id = []
 	for current in student_groups:
 		student_groups_id.append(current['id'])
+
+	#piscine init#
+	student_pool_month = student['pool_month']
+	student_pool_year = student['pool_year']
 	
 	#project init#
 	student_project = student['projects_users']
@@ -1133,6 +1187,24 @@ async def update(login, id):
 						await member.remove_roles(role)
 			except:
 				print(f"error with role intra: {groups}, discord:{discord_id} on {guild.name}")
+
+		#piscine sync#
+		cursor.execute(f"SELECT campus_id,pool_month,pool_year,discord_id FROM piscine WHERE guild_id='{guild.id}'")
+		data_list = cursor.fetchall()
+		for piscine in data_list:
+			try:
+				campus_id = piscine[0]
+				pool_month = piscine[1]
+				pool_year = piscine[2]
+				discord_id = piscine[3]
+				role = guild.get_role(discord_id)
+				if (campus_id in campus_list_id or campus_id == 0):
+					if (str(pool_year) == student_pool_year and pool_month == student_pool_month and role not in member.roles):
+						await member.add_roles(role)
+					elif ((str(pool_year) != student_pool_year or pool_month != student_pool_month) and role in member.roles):
+						await member.remove_roles(role)
+			except Exception as e:
+				print(f"error {e} with role intra: {pool_month} {pool_year}, discord:{discord_id} on {guild.name}")
 		
 		#project sync#
 		cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id='{guild.id}'")
@@ -1234,6 +1306,17 @@ async def disconect(id):
 			except:
 				print(f"error to remove: {role}, discord:{data} on {guild.name}")
 		
+		#piscine sync#
+		cursor.execute(f"SELECT discord_id FROM piscine WHERE guild_id='{guild.id}'")
+		data_list = cursor.fetchall()
+		for data in data_list:
+			try:
+				data = data[0]
+				role = guild.get_role(data)
+				if (role in member.roles):
+					await member.remove_roles(role)
+			except:
+				print(f"error to remove: {role}, discord:{data} on {guild.name}")
 		#project sync#
 		cursor.execute(f"SELECT discord_id FROM project WHERE guild_id='{guild.id}'")
 		data_list = cursor.fetchall()
