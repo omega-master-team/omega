@@ -587,6 +587,12 @@ async def admin_config(command, message):
 			role = guild.get_role(sub_item[2])
 			msg = f"{msg}{role} | {sub_item[1]}, campus_id: {sub_item[0]}\n"
 		msg = f"{msg}\n"
+	msg = f"\n{msg}``-> piscine <-``\n"
+	cursor.execute(f"SELECT campus_id,pool_month,pool_year,discord_id FROM piscine WHERE guild_id={command}")
+	piscine_list = cursor.fetchall()
+	for piscine in piscine_list:
+		role = guild.get_role(piscine[3])
+		msg = f"{msg}{role} | {piscine[1]} {piscine[2]}, campus_id: {piscine[0]}\n"
 	msg = f"\n{msg}``-> project <-``\n"
 	cursor.execute(f"SELECT campus_id,intra_id,discord_id,in_progress,finished,validated FROM project WHERE guild_id={command}")
 	project_list = cursor.fetchall()
