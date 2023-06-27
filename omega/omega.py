@@ -92,7 +92,7 @@ async def help(interaction: Interaction):
 	embed = Embed(title = f"{title}", url = "https://profile.intra.42.fr" , color = color)
 	embed.add_field(name = "___________", value = f"USERS", inline = False)
 	embed.add_field(name = "login", value = f"conectez vous au bot", inline = False)
-	embed.add_field(name = "logout", value = f"dé conectez vous du bot", inline = False)
+	embed.add_field(name = "logout", value = f"déconnectez vous du bot", inline = False)
 	embed.add_field(name = "___________", value = f"utilities", inline = False)
 	embed.add_field(name = "ping", value = f"renvoie le ping du bot", inline = False)
 	embed.add_field(name = "issue", value = f"for any issue mp the bot", inline = False)
