@@ -1399,7 +1399,7 @@ async def main():
 			await update(login,id)
 			cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
 			db.commit()
-			await asyncio.sleep(0.5)
+			await asyncio.sleep(2)
 			try:
 				new = cursor.fetchone()
 			except:
@@ -1411,7 +1411,7 @@ async def main():
 			cursor.execute(f"SELECT discord_id FROM users WHERE omega_id='{i}'")
 			id = int(cursor.fetchone()[0])
 			await update(login, id)
-			await asyncio.sleep(0.5)
+			await asyncio.sleep(2)
 		except :
 			a = 1
 		i = i + 1
@@ -1441,7 +1441,7 @@ async def main():
 			await update(login,id)
 			cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
 			db.commit()
-			await asyncio.sleep(0.5)
+			await asyncio.sleep(2)
 			try:
 				new = cursor.fetchone()
 			except:
