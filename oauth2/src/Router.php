@@ -8,6 +8,7 @@ class Router {
 		$_ENV['DOMAIN'] = getenv('DOMAIN');
 		$_ENV['API_UID'] = getenv('API_UID');
 		$_ENV['API_SECRET'] = getenv('API_SECRET');
+		$_ENV['MYSQL_HOST'] = getenv('MYSQL_HOST');
 		$_ENV['MYSQL_USER'] = getenv('MYSQL_USER');
 		$_ENV['MYSQL_PASSWORD'] = getenv('MYSQL_PASSWORD');
 		$_ENV['MYSQL_DATABASE'] = getenv('MYSQL_DATABASE');
@@ -16,6 +17,7 @@ class Router {
 			$_ENV['DOMAIN'] == false ||
 			$_ENV['API_UID'] == false ||
 			$_ENV['API_SECRET'] == false ||
+			$_ENV['MYSQL_HOST'] == false ||
 			$_ENV['MYSQL_USER'] == false ||
 			$_ENV['MYSQL_PASSWORD'] == false ||
 			$_ENV['MYSQL_DATABASE'] == false

@@ -13,7 +13,7 @@ class Manager {
 		if (is_null(self::$db))
 		{
 			try {
-				$dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mariadb';
+				$dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=' . $_ENV['MYSQL_HOST'];
 				self::$db = new PDO($dsn, $_ENV['MYSQL_USER'], $_ENV['MYSQL_PASSWORD']);
 			} catch (\Throwable $th) {
 				self::$db = null;
