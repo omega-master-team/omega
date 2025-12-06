@@ -142,7 +142,7 @@ async def logout(interaction: Interaction):
 	cursor.execute(f"DELETE FROM users WHERE discord_id={interaction.user.id}")
 	db.commit()
 	await interaction.response.send_message(f"You are now logout", ephemeral = True, delete_after=2)
-	await disconect(interaction.user.id)
+	await disconnect(interaction.user.id)
 
 @logout.error
 async def on_test_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
@@ -381,7 +381,7 @@ class Cancel(discord.ui.View):
 	foo : bool = None
 	
 	async def on_timeout(self) -> None:
-		a = 1
+		pass
 	
 	@discord.ui.button(label="Cancel", style=discord.ButtonStyle.red)
 	async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -703,7 +703,7 @@ async def logout_admin(command, message):
 		cursor.execute(f"DELETE FROM users WHERE intra_id='{command}'")
 		db.commit()
 		for dobble in dobble_login:
-			await disconect(dobble[0])
+			await disconnect(dobble[0])
 		channel = client.get_channel(LOGS_CHANNEL_ID)
 		title = f"{message.author} logout"
 		color = random.randint(0, 16777215)
@@ -715,7 +715,7 @@ async def logout_admin(command, message):
 	else:
 		cursor.execute(f"DELETE FROM users WHERE discord_id={command}")
 		db.commit()
-		await disconect(command)
+		await disconnect(command)
 		channel = client.get_channel(LOGS_CHANNEL_ID)
 		member = client.get_user(int(command))
 		title = f"{message.author} logout"
@@ -1040,12 +1040,11 @@ async def request(url) :
 	except :
 		init_api()
 		raw = api.get(f'https://api.intra.42.fr/v2/{url}')
-	finally :
-		if str(raw) == "<Response [200]>" or str(raw) == "<Response [404]>":
-			return raw.json()
-		else:
-			await print(f"bad request with : {url}")
-			return raw.json()
+	if str(raw) == "<Response [200]>" or str(raw) == "<Response [404]>":
+		return raw.json()
+	else:
+		print(f"bad request with : {url}")
+		return raw.json()
 
 #####################################################################################################################################################
 
@@ -1284,7 +1283,7 @@ async def update(login, id):
 			except:
 				print(f"error with role intra: {years}, discord:{discord_id} on {guild.name}")
 
-async def disconect(id):
+async def disconnect(id):
 	user = await client.fetch_user(id)
 	guild_list = user.mutual_guilds
 	for guild in guild_list:
@@ -1359,24 +1358,18 @@ async def disconect(id):
 			except:
 				print(f"error to remove: {role}, discord:{data} on {guild.name}")
 
-async def main():
-	i = 1
+async def sync_users():
 	cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
 	maintenance = cursor.fetchone()[0]
 	if maintenance == "on":
 		return
 
-	cursor.execute(f"SELECT omega_id FROM users")
+	cursor.execute(f"SELECT MAX(omega_id) FROM users")
 	number = cursor.fetchall()
-	try:
-		final = 0
-		for current in number:
-			final = current
-		number = final[0]
-	except:
-		number = 0
+	number = number[0][0] if len(number) else 0
 
-	while (i <= number and maintenance == "off"):
+	i = 1
+	while i <= number and maintenance == "off":
 		await sync_new_users()
 
 		try :
@@ -1387,23 +1380,20 @@ async def main():
 			await update(login, id)
 			await asyncio.sleep(2)
 		except :
-			a = 1
-		i = i + 1
+			pass
+		i += 1
 		cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
 		maintenance = cursor.fetchone()[0]
-		db.commit()
 
 	if number == 0:
 		await sync_new_users()
-		await asyncio.sleep(5)
 
 async def sync_new_users():
 	cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
 	try:
 		new = cursor.fetchone()
 	except:
-		new = 1
-	db.commit()
+		new = None
 	while new:
 		id = new[0]
 		login = new[1]
@@ -1412,20 +1402,19 @@ async def sync_new_users():
 		cursor.execute(f"SELECT discord_id FROM users WHERE intra_id='{login}'")
 		dobble_login = cursor.fetchall()
 		for dobble in dobble_login:
-			if (dobble[0] != id):
-				await disconect(dobble[0])
+			if dobble[0] != id:
+				await disconnect(dobble[0])
 		cursor.execute(f"DELETE FROM users WHERE intra_id='{login}'")
 		cursor.execute(f"DELETE FROM new_users WHERE discord_id={id} and intra_id='{login}'")
 		db.commit()
-		await update(login,id)
+		await update(login, id)
 		cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
 		db.commit()
 		await asyncio.sleep(2)
 		try:
 			new = cursor.fetchone()
 		except:
-			new = 0
-		db.commit()
+			new = None
 
 ##################################################setup discord and call token##################################################################
 
@@ -1458,13 +1447,8 @@ async def presence():
 async def on_ready():
 	await tree.sync()
 	presence.start()
-	while (client.get_guild(int(MASTER_GUILD_ID)) != None):
-		await main()
-		cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
-		maintenance = cursor.fetchone()[0]
-		while maintenance == "on":
-			await asyncio.sleep(2)
-			cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
-			maintenance = cursor.fetchone()[0]
+	while True:
+		await sync_users()
+		await asyncio.sleep(2)
 
 client.run(os.getenv('BOT_TOKEN'))
