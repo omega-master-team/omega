@@ -1372,7 +1372,7 @@ async def sync_users():
 			login = user[1]
 			id = int(user[0])
 			await update(login, id)
-			await asyncio.sleep(5)
+			await asyncio.sleep(7)
 		except:
 			pass
 
