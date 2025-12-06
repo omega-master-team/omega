@@ -20,6 +20,9 @@ from builtins import input
 
 import mysql.connector
 
+MASTER_GUILD_ID = 1084295027783639080
+LOGS_CHANNEL_ID = 1088582242290368572
+
 connected = False
 while (connected != True):
 	try:
@@ -43,7 +46,7 @@ tree = app_commands.CommandTree(client)
 redirect = f"{os.getenv('DOMAIN')}/api?code="
 
 def admin_check(id):
-	guild = client.get_guild(int(1084295027783639080))
+	guild = client.get_guild(int(MASTER_GUILD_ID))
 	member = guild.get_member(id)
 	if member == None:
 		return(0)
@@ -441,7 +444,7 @@ async def on_interaction(interaction=Interaction):
 					db.commit()
 					user = await client.fetch_user(user)
 					channel = await client.fetch_channel(interaction.channel_id)
-					guild = client.get_guild(int(1084295027783639080))
+					guild = client.get_guild(int(MASTER_GUILD_ID))
 					category = discord.utils.get(guild.categories, id=1090795985820733612)
 					await channel.edit(name=f"{user}_old", category=category, sync_permissions=True)
 					embed = Embed(title = f"Ticket Close", description=f"Your ticket have been close by the staff team", color=Colour.red())
@@ -468,9 +471,6 @@ async def launch_button(interaction: discord.Interaction,label:str,style: app_co
 	level = admin_check(interaction.user.id)
 	if (not interaction.user.guild_permissions.administrator and level <= 2):
 		await interaction.response.send_message(f"Not allowed !\nYou must be administrator", ephemeral = True, delete_after=2)
-		return
-	if (interaction.guild_id == 1084295027783639080 and not interaction.user.id == 626861778030034945):
-		await interaction.response.send_message(f"Good try 🤡")
 		return
 	if style.value==1:
 		style = ButtonStyle.blurple
@@ -617,7 +617,7 @@ async def send(command, message):
 		await message.channel.send(f"Fail to mp {member}")
 		return
 	await message.channel.send(f"Succesfully send to {member}")
-	channel = client.get_channel(1088582242290368572)
+	channel = client.get_channel(LOGS_CHANNEL_ID)
 	title = f"Mp from {message.author} to {member}"
 	color = random.randint(0, 16777215)
 	color = Colour(color) 
@@ -652,7 +652,7 @@ async def new_status(command, message):
 	cursor.execute(f"INSERT INTO status (name) VALUES ('{command}')")
 	db.commit()
 	await message.channel.send(f"Add : {command}")
-	channel = client.get_channel(1088582242290368572)
+	channel = client.get_channel(LOGS_CHANNEL_ID)
 	title = f"{message.author} set a new status"
 	color = random.randint(0, 16777215)
 	color = Colour(color) 
@@ -665,7 +665,7 @@ async def rm_status(command, message):
 	cursor.execute(f"DELETE FROM status WHERE name='{command}'")
 	db.commit()
 	await message.channel.send(f"Remove : {command}")
-	channel = client.get_channel(1088582242290368572)
+	channel = client.get_channel(LOGS_CHANNEL_ID)
 	title = f"{message.author} remove a status"
 	color = random.randint(0, 16777215)
 	color = Colour(color) 
@@ -684,7 +684,7 @@ async def sync_admin(command, message):
 	db.commit()
 	await message.channel.send("Success")
 	await pdt.delete()
-	channel = client.get_channel(1088582242290368572)
+	channel = client.get_channel(LOGS_CHANNEL_ID)
 	member = client.get_user(int(discord_id))
 	title = f"{message.author} force sync"
 	color = random.randint(0, 16777215)
@@ -704,7 +704,7 @@ async def logout_admin(command, message):
 		db.commit()
 		for dobble in dobble_login:
 			await disconect(dobble[0])
-		channel = client.get_channel(1088582242290368572)
+		channel = client.get_channel(LOGS_CHANNEL_ID)
 		title = f"{message.author} logout"
 		color = random.randint(0, 16777215)
 		color = Colour(color) 
@@ -716,7 +716,7 @@ async def logout_admin(command, message):
 		cursor.execute(f"DELETE FROM users WHERE discord_id={command}")
 		db.commit()
 		await disconect(command)
-		channel = client.get_channel(1088582242290368572)
+		channel = client.get_channel(LOGS_CHANNEL_ID)
 		member = client.get_user(int(command))
 		title = f"{message.author} logout"
 		color = random.randint(0, 16777215)
@@ -756,7 +756,7 @@ async def admin_join(command, message):
 		try:
 			invite = await current.create_invite(max_uses = 1, reason = "Omega master request", max_age=3600)
 			await message.channel.send(invite)
-			channel = client.get_channel(1088582242290368572)
+			channel = client.get_channel(LOGS_CHANNEL_ID)
 			title = f"{message.author} join {guild.name}"
 			color = random.randint(0, 16777215)
 			color = Colour(color) 
@@ -774,7 +774,7 @@ async def srv_leave(command, message):
 	try:
 		await guild.leave()
 		await message.channel.send(f"Successfully leave {guild.name}")
-		channel = client.get_channel(1088582242290368572)
+		channel = client.get_channel(LOGS_CHANNEL_ID)
 		title = f"{message.author} leave {guild.name}"
 		color = random.randint(0, 16777215)
 		color = Colour(color) 
@@ -942,7 +942,7 @@ async def on_message(message):
 					return
 				elif view.foo is False:
 					return              
-				guild = client.get_guild(int(1084295027783639080))
+				guild = client.get_guild(int(MASTER_GUILD_ID))
 				category = discord.utils.get(guild.categories, id=1090772760415973417)
 				channel = await guild.create_text_channel(name=f"{message.author}_ticket", category=category)
 				view = discord.ui.View(timeout=None)
@@ -1480,7 +1480,7 @@ async def presence():
 async def on_ready():
 	await tree.sync()
 	presence.start()
-	while (client.get_guild(int(1084295027783639080)) != None):
+	while (client.get_guild(int(MASTER_GUILD_ID)) != None):
 		await main()
 		cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
 		maintenance = cursor.fetchone()[0]
@@ -1488,14 +1488,5 @@ async def on_ready():
 			await asyncio.sleep(2)
 			cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
 			maintenance = cursor.fetchone()[0]
-	print("Unautorized bot version, please contact ngennaro (Gennaron#7378)")
-	ngennaro = client.get_user(626861778030034945)
-	if ngennaro != None:
-		await ngennaro.send(f"Unautorized version of omega is runing as {client.user}")
-	cursor.execute(f"SELECT part,status FROM maintenance")
-	module_list = cursor.fetchall()
-	for module in module_list:
-		cursor.execute(f"UPDATE 'maintenance' SET status='on' WHERE part='{module[0]}'")
-		db.commit()
 
 client.run(os.getenv('BOT_TOKEN'))
