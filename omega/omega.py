@@ -1358,43 +1358,40 @@ async def disconnect(id):
 			except:
 				print(f"error to remove: {role}, discord:{data} on {guild.name}")
 
+@tasks.loop(seconds=2)
 async def sync_users():
 	cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
 	maintenance = cursor.fetchone()[0]
 	if maintenance == "on":
 		return
 
-	cursor.execute(f"SELECT MAX(omega_id) FROM users")
-	number = cursor.fetchall()
-	number = number[0][0] if len(number) else 0
-
-	i = 1
-	while i <= number and maintenance == "off":
-		await sync_new_users()
-
-		try :
-			cursor.execute(f"SELECT intra_id FROM users WHERE omega_id='{i}'")
-			login = cursor.fetchone()[0]
-			cursor.execute(f"SELECT discord_id FROM users WHERE omega_id='{i}'")
-			id = int(cursor.fetchone()[0])
+	cursor.execute(f"SELECT discord_id, intra_id FROM users")
+	users = cursor.fetchall()
+	for user in users:
+		try:
+			login = user[1]
+			id = int(user[0])
 			await update(login, id)
-			await asyncio.sleep(2)
-		except :
+			await asyncio.sleep(5)
+		except:
 			pass
-		i += 1
+
 		cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
 		maintenance = cursor.fetchone()[0]
+		if maintenance == "on":
+			return
 
-	if number == 0:
-		await sync_new_users()
-
+@tasks.loop(seconds=1)
 async def sync_new_users():
-	cursor.execute(f"SELECT discord_id,intra_id FROM new_users")
-	try:
-		new = cursor.fetchone()
-	except:
-		new = None
-	while new:
+	cursor.execute(f"SELECT status FROM maintenance WHERE part='sync_task'")
+	maintenance = cursor.fetchone()[0]
+	if maintenance == "on":
+		return
+
+	db.commit()
+	cursor.execute(f"SELECT discord_id, intra_id FROM new_users")
+	users = cursor.fetchall()
+	for new in users:
 		id = new[0]
 		login = new[1]
 		cursor.execute(f"DELETE FROM users WHERE discord_id={id}")
@@ -1411,10 +1408,6 @@ async def sync_new_users():
 		cursor.execute(f"INSERT INTO users (discord_id, intra_id) VALUES ({id},'{login}')")
 		db.commit()
 		await asyncio.sleep(2)
-		try:
-			new = cursor.fetchone()
-		except:
-			new = None
 
 ##################################################setup discord and call token##################################################################
 
@@ -1447,8 +1440,7 @@ async def presence():
 async def on_ready():
 	await tree.sync()
 	presence.start()
-	while True:
-		await sync_users()
-		await asyncio.sleep(2)
+	sync_users.start()
+	sync_new_users.start()
 
 client.run(os.getenv('BOT_TOKEN'))
