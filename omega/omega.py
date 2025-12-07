@@ -1040,18 +1040,63 @@ async def request(url) :
 	except :
 		init_api()
 		raw = api.get(f'https://api.intra.42.fr/v2/{url}')
+	if str(raw) == "<Response [429]>":
+		await asyncio.sleep(1)
+		return await request(url)
 	if str(raw) == "<Response [200]>" or str(raw) == "<Response [404]>":
 		return raw.json()
 	else:
-		print(f"bad request with : {url}")
+		print(f"bad request with : {url} {str(raw)}")
 		return raw.json()
+
+async def get_all_users(logins):
+	if not logins:
+		return []
+
+	if len(f'/users?filter[login]={",".join(map(str, logins))}&page[size]=100&page[number]=100') >= 8000:
+		mid = len(logins) // 2
+		first_half = await get_all_users(logins[:mid])
+		second_half = await get_all_users(logins[mid:])
+		return first_half + second_half
+
+	users = []
+	page = 1
+	res = None
+	while res == None or len(res):
+		res = await request(f'/users?filter[login]={",".join(map(str, logins))}&page[size]=100&page[number]={page}')
+		users.extend(res)
+		page += 1
+	return users
+
+async def get_all_users_coalitions(ids):
+	if not ids:
+		return []
+
+	if len(f'/coalitions_users?filter[user_id]={",".join(map(str, ids))}&page[size]=100&page[number]=100') >= 8000:
+		mid = len(ids) // 2
+		first_half = await get_all_users_coalitions(ids[:mid])
+		second_half = await get_all_users_coalitions(ids[mid:])
+		return first_half + second_half
+
+	coalitions = []
+	page = 1
+	res = None
+	while res == None or len(res):
+		res = await request(f'/coalitions_users?filter[user_id]={",".join(map(str, ids))}&page[size]=100&page[number]={page}')
+		coalitions.extend(res)
+		page += 1
+	return coalitions
 
 #####################################################################################################################################################
 
 async def update(login, id):
+	student = await request(f'users/{login}')
+	student_coa = await request(f'users/{login}/coalitions_users')
+	await process_update(login, id, student, student_coa)
+
+async def process_update(login, id, student, student_coa):
 	user = await client.fetch_user(id)
 	guild_list = user.mutual_guilds
-	student = await request(f'users/{login}')
 	#base init#
 	display_name = student['displayname']
 	usual_name = student['usual_full_name']
@@ -1121,7 +1166,6 @@ async def update(login, id):
 		student_project_data.append(new)
 	
 	#coa init#
-	student_coa = await request(f'users/{login}/coalitions_users')
 	student_coa_id = []
 	for current in student_coa:
 		student_coa_id.append(current['coalition_id'])
@@ -1367,12 +1411,22 @@ async def sync_users():
 
 	cursor.execute(f"SELECT discord_id, intra_id FROM users")
 	users = cursor.fetchall()
+
+	intra_users = await get_all_users([user[1] for user in users])
+	intra_coalitions_users = await get_all_users_coalitions([user["id"] for user in intra_users])
+
 	for user in users:
 		try:
 			login = user[1]
 			id = int(user[0])
-			await update(login, id)
-			await asyncio.sleep(7)
+			student = await request(f"users/{login}")
+			student_coa = []
+			for coa_user in intra_coalitions_users:
+				if coa_user["user_id"] == student["id"]:
+					student_coa.append(coa_user)
+
+			await process_update(login, id, student, student_coa)
+			await asyncio.sleep(4)
 		except:
 			pass
 
