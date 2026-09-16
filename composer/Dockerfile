@@ -1,7 +1,6 @@
-FROM debian:bullseye-slim
+FROM debian:12-slim
 
-RUN \
-	apt-get update \
+RUN apt-get update \
 	&& apt-get upgrade -y \
 	&& apt-get install -y php-cli libzip-dev php-mysql php-curl php-zip git \
 	&& apt-get clean
