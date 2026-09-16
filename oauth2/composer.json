@@ -15,6 +15,6 @@
 	"minimum-stability": "dev",
 	"require": {
 		"altorouter/altorouter": "dev-master",
-		"rexlabs/hyper-http": "^2.6"
+		"rexlabs/hyper-http": "^4"
 	}
 }

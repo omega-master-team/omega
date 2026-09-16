@@ -82,7 +82,6 @@ services:
     hostname: composer
     volumes:
       - ./oauth2:/app
-    command: 'composer -W u'
 
   # web service (proxy + ssl cert)
   nginx:
